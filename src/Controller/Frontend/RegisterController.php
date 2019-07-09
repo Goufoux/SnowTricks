@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -39,6 +39,7 @@ class RegisterController extends AbstractController
             $user->setPassword($encodedPassword);
             $registerToken = uniqid();
             $user->setRegisterToken($registerToken);
+            $user->setActive(false);
 
             $this->sendRegisterMail($user, $mailer);
 
@@ -48,8 +49,9 @@ class RegisterController extends AbstractController
             return $this->redirectToRoute('welcome');
         }
 
-        return $this->render('register/register.html.twig', [
-            'form' => $registrationForm->createView()
+        return $this->render('frontend/register/register.html.twig', [
+            'form' => $registrationForm->createView(),
+            'title' => 'SnowTricks - Inscription'
         ]);
     }
 
@@ -104,6 +106,6 @@ class RegisterController extends AbstractController
      */
     public function welcome()
     {
-        return $this->render('register/welcome.html.twig');
+        return $this->render('frontend/register/welcome.html.twig');
     }
 }

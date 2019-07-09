@@ -1,0 +1,101 @@
+// setup an "add a tag" link
+var $addTagLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+var $newLinkLi = $('<li></li>').append($addTagLink);
+
+$(document).ready(function() {
+    console.log('ready');
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    $("form").on("change", ".custom-file-input", function () {
+        console.log('file changed');
+        let $input = $(this);
+        let fileName = $input.val().split("\\").pop();
+        $input.siblings(".custom-file-label").html(fileName);
+
+        // Afficher un aperçu de l'image sélectionnée
+        let files = this.files;
+        if (files == undefined || files.length == 0) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $parent = $input.parent().parent();
+            $parent.children('a').remove(); // Première fois pour retirer le lien de téléchargement
+
+            $previewEl = $parent.children('.preview-photo');
+            if ($previewEl.length == 0) {
+                $parent.append('<img class="preview-photo" src="' + e.target.result + '" alt="prévisualisation de l\'image" style="max-width:150px">')
+            } else {
+                $previewEl.attr('src', e.target.result);
+            }
+        }
+        reader.readAsDataURL(files[0]);
+    });
+
+    // Get the ul that holds the collection of tags
+   var $collectionHolder = $('ul.medias');
+    
+    // add the "add a tag" anchor and li to the tags ul
+    $collectionHolder.append($newLinkLi);
+    
+    // count the current form inputs we have (e.g. 2), use that as the new
+    // index when inserting a new item (e.g. 2)
+    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+    $('ul.medias li').each(function() {
+        if ($(this.children).hasClass('add_tag_link')) {
+            return;
+        }
+        $(this.children).append('<a href="#" class="remove-tag">x</a>');
+        // handle the removal, just for this example
+        $('.remove-tag').click(function(e) {
+            e.preventDefault();
+            
+            $(this).parent().parent().remove();
+            
+            return false;
+        });
+    });
+    
+    $addTagLink.on('click', function(e) {
+        // prevent the link from creating a "#" on the URL
+        e.preventDefault();
+        
+        // add a new tag form (see code block below)
+        addTagForm($collectionHolder, $newLinkLi);
+    });
+    
+    
+});
+
+function addTagForm($collectionHolder, $newLinkLi) {
+    // Get the data-prototype explained earlier
+    var prototype = $collectionHolder.data('prototype');
+    
+    // get the new index
+    var index = $collectionHolder.data('index');
+    
+    // Replace '$$name$$' in the prototype's HTML to
+    // instead be a number based on how many items we have
+    var newForm = prototype.replace(/__name__/g, index);
+    
+    // increase the index with one for the next item
+    $collectionHolder.data('index', index + 1);
+    
+    // Display the form in the page in an li, before the "Add a tag" link li
+    var $newFormLi = $('<li></li>').append(newForm);
+    
+    // also add a remove button, just for this example
+    $newFormLi.append('<a href="#" class="remove-tag">x</a>');
+    
+    $newLinkLi.before($newFormLi);
+    
+    // handle the removal, just for this example
+    $('.remove-tag').click(function(e) {
+        e.preventDefault();
+        
+        $(this).parent().remove();
+        
+        return false;
+    });
+}

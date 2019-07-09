@@ -1,0 +1,10 @@
+{% include "backend/base.html.twig" %}
+{% block body %}
+    <h1>update user</h1>
+    <h2>General data</h2>
+    {{ form_start(user_form) }}
+    {{ form_end(user_form) }}
+    <h2>Password</h2>
+    {{ form_start(password_form) }}
+    {{ form_end(password_form) }}
+{% endblock %}

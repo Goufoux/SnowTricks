@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -23,11 +24,23 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=35)
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=3, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=35,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=35)
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=3, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=35,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $first_name;
 
@@ -234,6 +247,11 @@ class User implements UserInterface
         $this->photo_src = $photo_src;
 
         return $this;
+    }
+
+    public function hasRoleAdmin()
+    {
+        return in_array('ROLE_ADMIN', $this->roles);
     }
 
     public function setRoles(?array $roles): self

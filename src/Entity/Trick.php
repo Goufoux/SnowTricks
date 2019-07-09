@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrickRepository")
@@ -30,19 +31,25 @@ class Trick
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=3, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=50,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=15, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=500,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $description;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Group", inversedBy="tricks")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $trick_group;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tricks")
@@ -51,7 +58,7 @@ class Trick
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick")
+     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick", cascade={"persist"})
      */
     private $media;
 
@@ -59,6 +66,12 @@ class Trick
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick")
      */
     private $comments;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\TrickGroup", inversedBy="tricks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $trick_group;
 
     public function __construct()
     {
@@ -115,18 +128,6 @@ class Trick
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getTrickGroup(): ?Group
-    {
-        return $this->trick_group;
-    }
-
-    public function setTrickGroup(?Group $trick_group): self
-    {
-        $this->trick_group = $trick_group;
 
         return $this;
     }
@@ -201,6 +202,18 @@ class Trick
                 $comment->setTrick(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTrickGroup(): ?TrickGroup
+    {
+        return $this->trick_group;
+    }
+
+    public function setTrickGroup(?TrickGroup $trick_group): self
+    {
+        $this->trick_group = $trick_group;
 
         return $this;
     }

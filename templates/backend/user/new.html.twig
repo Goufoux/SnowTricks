@@ -1,0 +1,31 @@
+{% include "backend/base.html.twig" %}
+{% block body %}
+<h1 class="col-12">
+    {% if app.request.attributes.get('_route') == 'app_admin_user_new' %}
+    <i class="fa fa-plus-circle mr-2"></i>
+    Nouvel utilisateur
+    {% else %}
+    <i class="fa fa-pencil mr-2"></i>
+    Mise à jour
+    {% endif %}
+</h1>
+<div class="col-lg-6 col-sm-12 mx-auto">
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.first_name) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.email) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.password) }}
+        </div>
+        <div class="form-group text-right">
+            {{ form_widget(form.register) }}
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% include "backend/base.html.twig" %}
+{% block body %}
+<h1 class="col-12">Liste des utilisateurs ({{ users|length }})</h1>
+<section class="col-12">
+    <div class="row justify-content-center">
+        {% for user in users %}
+            <div class="card bg-primary col-xl-3 col-lg-4 col-md-5 col-12 p-0 m-2">
+                <h5 class="card-header text-secondary">
+                    <i class="fa fa-user-circle mr-2"></i>
+                    {{ user.username }}
+                </h5>
+                <div class="card-footer">
+                    <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                            <span class="badge badge-secondary p-2 rounded">
+                                <i class="fa fa-calendar mr-2"></i>
+                                {{ user.createdAt|date("d/m/y") }}
+                            </span>
+                        </div>
+                        <div class="col-12 mt-2 text-center">
+                            <a href="{{ url('app_user_view', {user: user.id}) }}" class="btn btn-info">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="{{ url('app_admin_user_update', {user: user.id}) }}" class="btn btn-info">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a href="{{ url('app_admin_user_remove', {user: user.id}) }}" class="btn btn-danger">
+                                <i class="fa fa-trash"></i>    
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

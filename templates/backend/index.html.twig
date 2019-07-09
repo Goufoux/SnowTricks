@@ -1,4 +1,57 @@
 {% include "backend/base.html.twig" %}
 {% block body %}
-<h1>Hello World !</h1>
+<h1 class="col-12">Backend</h1>
+<blockquote class="blockquote col-12">
+    <p>
+        Dans le backend vous pouvez gérer les utilisateurs, les tricks, les groupes de tricks et les commentaires.
+    </p>
+</blockquote>
+<section class="col-12">
+    <div class="row justify-content-center">
+        <div class="card bg-primary col-xl-3 col-lg-5 col-md-6 col-12 p-0 m-2">
+            <h5 class="card-header text-secondary">
+                Derniers utilisateurs enregistrés
+            </h5>
+            <div class="list-group">
+                {% for user in users %}
+                    <a href="{{ url('app_user_view', {user: user.id}) }}" class="list-group-item list-group-item-action">
+                        {{ user.username }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card bg-primary col-xl-3 col-lg-5 col-md-6 col-12 p-0 m-2">
+            <h5 class="card-header text-secondary">
+                Derniers tricks enregistrés
+            </h5>
+            <div class="list-group">
+                {% for trick in tricks %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        {{ trick.name }}
+                    </a>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Aucun trick en base</h5>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card bg-primary col-xl-3 col-lg-5 col-md-6 col-12 p-0 m-2">
+            <h5 class="card-header text-secondary">
+                Derniers commentaires enregistrés
+            </h5>
+            <div class="list-group">
+                {% for comment in comments %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        {{ comment.content }}
+                    </a>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Aucun commentaire en base</h5>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

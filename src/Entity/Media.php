@@ -27,11 +27,6 @@ class Media
      */
     private $media_src;
 
-    /**
-     * @ORM\Column(type="string", length=5)
-     */
-    private $type;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -57,18 +52,6 @@ class Media
     public function setMediaSrc(string $media_src): self
     {
         $this->media_src = $media_src;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
 
         return $this;
     }
