@@ -15,6 +15,7 @@ class MediaType extends AbstractType
         $builder
             ->add('media_src', Type\FileType::class, [
                 'data_class' => null,
+                // 'by_reference' => false,
                 'required' => false
             ])
         ;
@@ -27,7 +28,6 @@ class MediaType extends AbstractType
                 ]
             ]);
         }
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

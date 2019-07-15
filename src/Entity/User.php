@@ -26,7 +26,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=35)
      * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
      * @Assert\Length(
-     *  min=3, 
+     *  min=3,
      *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
      *  max=35,
      *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
@@ -37,7 +37,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=35)
      * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
      * @Assert\Length(
-     *  min=3, 
+     *  min=3,
      *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
      *  max=35,
      *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Util\OrderedHashMap;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
 
 class TrickController extends AbstractController
 {
@@ -97,11 +98,19 @@ class TrickController extends AbstractController
         $mediaGroup = new ArrayCollection();
 
         foreach ($trick->getMedia() as $media) {
+            $media->setMediaSrc(
+                new UploadedFile($this->getParameter('trick_directory').$media->getMediaSrc(), $media->getMediaSrc())
+                // new File($this->getParameter('trick_directory').$media->getMediaSrc())
+            );
             $mediaGroup->add($media);
+            // $trick->getMedia()->setMediaSrc(
+            //     new File($this->getParameter('trick_directory').$trick->getMedia()->getMediaSrc())
+            // );
         }
 
+        // dd($trick, $mediaGroup);
+
         if ($trickForm->isSubmitted() && $trickForm->isValid()) {
-            
             foreach ($mediaGroup as $media) {
                 if (false === $trick->getMedia()->contains($media)) {
                     $this->em->remove($media);
@@ -142,6 +151,6 @@ class TrickController extends AbstractController
 
         $this->addFlash('danger', 'trick removed!');
         
-        return new RedirectResponse($this->generateUrl('app_admin_trick'));        
+        return new RedirectResponse($this->generateUrl('app_admin_trick'));
     }
 }

@@ -27,6 +27,8 @@ class Media
      */
     private $media_src;
 
+    private $file;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +54,18 @@ class Media
     public function setMediaSrc(string $media_src): self
     {
         $this->media_src = $media_src;
+
+        return $this;
+    }
+
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    public function setFile($file)
+    {
+        $this->file = $file;
 
         return $this;
     }

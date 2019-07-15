@@ -19,7 +19,7 @@ class TricksFixtures extends Fixture
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
         $this->encoder = $encoder;
-        $this->faker = Faker\Factory::create('fr_FR');    
+        $this->faker = Faker\Factory::create('fr_FR');
     }
     public function load(ObjectManager $manager)
     {
@@ -52,6 +52,17 @@ class TricksFixtures extends Fixture
 
     private function createUsers(ObjectManager $manager)
     {
+        $specialUser = new User();
+        $specialUser->setName('Roussel');
+        $specialUser->setFirstName('Quentin');
+        $specialUser->setEmail('quentin.roussel@genarkys.fr');
+        $specialUser->setCreatedAt(new \DateTime());
+        $encodedPassword = $this->encoder->encodePassword($specialUser, self::DEFAULT_PASSWORD);
+        $specialUser->setPassword($encodedPassword);
+        $specialUser->setActive(true);
+        $specialUser->setRoles(["ROLE_ADMIN"]);
+        $manager->persist($specialUser);
+
         for ($i = 0; $i < 20; $i++) {
             $user = new User();
             $user->setName($this->faker->name);

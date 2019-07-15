@@ -23,7 +23,7 @@ class TrickType extends AbstractType
                 'class' => TrickGroup::class,
                 'choice_label' => 'label',
                 'placeholder' => 'Group ?',
-                'required' => true 
+                'required' => true
             ])
             ->add('media', Type\CollectionType::class, [
                 'entry_type' => MediaType::class,
