@@ -32,9 +32,9 @@ class RegistrationType extends AbstractType
             ])
             ->add('register', Type\SubmitType::class, [
                 'attr' => [
-                    'class' => ($options['forAdd'] === true) ? 'btn btn-success' : 'btn btn-info'
+                    'class' => 'btn btn-success'
                 ],
-                'label' => ($options['forAdd'] === true) ? 'Inscription' : 'Mettre à jour'
+                'label' => 'Inscription'
             ])
         ;
 
@@ -46,14 +46,12 @@ class RegistrationType extends AbstractType
                 'attr' => ['checked' => ($options['hasRoleAdmin'] === true) ? 'checked' : '']
             ]);
         }
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'forAdd' => true,
             'isAdmin' => false,
             'hasRoleAdmin' => false
         ]);

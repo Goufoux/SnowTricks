@@ -23,6 +23,7 @@
         <li>
             {{ form_errors(mediaField) }}
             {{ form_widget(mediaField) }}
+            Test {{ trick.media[loop.index0].mediaSrc }}
         </li>
         {% endfor %}
     </ul>

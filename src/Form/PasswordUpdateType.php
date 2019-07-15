@@ -15,17 +15,22 @@ class PasswordUpdateType extends AbstractType
         $builder
             ->add('old_password', Type\PasswordType::class, [
                 'label' => 'Mot de passe actuel',
-                'mapped' => false
+                'mapped' => false,
+                'invalid_message' => 'Mot de incorrect'
             ])
             ->add('password', Type\RepeatedType::class, [
                 'type' => Type\PasswordType::class,
                 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
                 'first_options' => ['label' => 'Nouveau mot de passe'],
-                'second_options' => ['label' => 'Confirmation du nouveau mot de passe']
+                'second_options' => ['label' => 'Confirmation du nouveau mot de passe'],
+                'invalid_message' => 'Mot de passe invalide'
             ])
             ->add('register', Type\SubmitType::class, [
-                'label' => 'Mettre à jour'
+                'label' => 'Mettre à jour',
+                'attr' => [
+                    'class' => 'btn btn-info'
+                ]
             ])
         ;
     }
@@ -33,7 +38,6 @@ class PasswordUpdateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
         ]);
     }
 }

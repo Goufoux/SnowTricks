@@ -4,33 +4,8 @@ var $newLinkLi = $('<li></li>').append($addTagLink);
 
 $(document).ready(function() {
     console.log('ready');
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-    $("form").on("change", ".custom-file-input", function () {
-        console.log('file changed');
-        let $input = $(this);
-        let fileName = $input.val().split("\\").pop();
-        $input.siblings(".custom-file-label").html(fileName);
-
-        // Afficher un aperçu de l'image sélectionnée
-        let files = this.files;
-        if (files == undefined || files.length == 0) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            $parent = $input.parent().parent();
-            $parent.children('a').remove(); // Première fois pour retirer le lien de téléchargement
-
-            $previewEl = $parent.children('.preview-photo');
-            if ($previewEl.length == 0) {
-                $parent.append('<img class="preview-photo" src="' + e.target.result + '" alt="prévisualisation de l\'image" style="max-width:150px">')
-            } else {
-                $previewEl.attr('src', e.target.result);
-            }
-        }
-        reader.readAsDataURL(files[0]);
-    });
+    
+    
 
     // Get the ul that holds the collection of tags
    var $collectionHolder = $('ul.medias');

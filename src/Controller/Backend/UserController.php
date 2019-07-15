@@ -13,6 +13,14 @@ use App\Form\PasswordUpdateType;
 use App\Form\UpdateUserType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Form\FormInterface;
+use App\Form\MediaType;
+use App\Form\AvatarType;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Entity\Avatar;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
@@ -80,15 +88,26 @@ class UserController extends AbstractController
      */
     public function update(User $user, Request $request, UserPasswordEncoderInterface $encoder)
     {
-        $userForm = $this->createForm(RegistrationType::class, $user, ['forAdd' => false, 'isAdmin' => true, 'hasRoleAdmin' => $user->hasRoleAdmin()]);
+        $userForm = $this->createForm(UpdateUserType::class, $user, ['isAdmin' => true]);
         $userForm->handleRequest($request);
 
+        $passwordForm = $this->createForm(PasswordUpdateType::class);
+        $passwordForm->handleRequest($request);
+
         if ($userForm->isSubmitted() && $userForm->isValid()) {
+
             /** @var User $user */
             $user = $userForm->getData();
+            
+            if (!empty($request->files)) {
+                /** @var UploadedFile $avatar */
+                $avatar = $request->files->get('update_user')['avatar'];
+                $fileName = uniqid().'.'.$avatar->guessClientExtension();
+                $user->setAvatar($fileName);
+                $avatar->move($this->getParameter('avatar_directory'), $fileName);
+            }
+            
             $user->setUpdatedAt(new \DateTime());
-            $password = $encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
             $this->em->merge($user);
             $this->em->flush();
             $this->addFlash('success', 'user updated!');
@@ -96,9 +115,81 @@ class UserController extends AbstractController
             return new RedirectResponse($this->generateUrl('app_admin_user'));
         }
 
-        return $this->render('backend/user/new.html.twig', [
-            'form' => $userForm->createView()
+        if ($this->verifyPasswordForm($passwordForm, $user, $encoder)) {
+            return new RedirectResponse($this->generateUrl('app_admin_user_update', ['user' => $user->getId()]));
+        }
+
+        return $this->render('backend/user/update.html.twig', [
+            'user_form' => $userForm->createView(),
+            'password_form' => $passwordForm->createView(),
+            'user' => $user
         ]);
+    }
+
+    private function uploadAvatar(FormInterface $form, User $user)
+    {
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $file */
+            $file = $form->get('avatar_src')->getData();
+            // dd($form->get('avatar_src'));
+            $fs = new Filesystem();
+            $mediaName = uniqid();
+            $ext = $file->getClientOriginalExtension();
+            try {
+                $file->move($this->getParameter('avatar_directory'), $mediaName.'.'.$ext);
+
+                if ($user->getAvatar() === null) {
+                    $avatar = new Avatar();
+                    $avatar->setUser($user);
+                } else {
+                    $avatar = $user->getAvatar();
+                }
+                
+                $avatar->setAvatarSrc($mediaName.'.'.$ext);
+
+                $user->setAvatar($avatar);
+
+                // $user->getAvatar()->setAvatarSrc($mediaName.'.'.$ext);
+
+                $this->em->merge($user);
+
+                $this->em->flush();
+
+                $this->addFlash('success', 'File uploaded');
+            } catch (FileException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+            // dd($file->guessExtension(), $form, $mediaName);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function verifyPasswordForm(FormInterface $passwordForm, User $user, UserPasswordEncoderInterface $encoder)
+    {
+        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+            
+            $oldPassword = $passwordForm->get('old_password')->getData();
+
+            if (password_verify($oldPassword, $user->getPassword()) === false) {
+                $passwordForm->get('old_password')->addError(new FormError('Mot de passe incorrect'));
+
+                return false;
+            }
+
+            $encodedPassword = $encoder->encodePassword($user, $passwordForm->get('password')->getData());
+            $user->setPassword($encodedPassword);
+
+            $this->em->merge($user);
+            $this->em->flush();
+
+            $this->addFlash('success', 'Données de connexion mise à jour.');
+            
+            return true;
+        }
+
+        return false;
     }
 
     /**

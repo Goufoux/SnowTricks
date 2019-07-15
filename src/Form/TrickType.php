@@ -29,7 +29,7 @@ class TrickType extends AbstractType
                 'entry_type' => MediaType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference' => false,
+                // 'by_reference' => false,
                 'data_class' => null
             ])
             ->add('register', Type\SubmitType::class, [

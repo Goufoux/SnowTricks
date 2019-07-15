@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Avatar;
 
 class UserController extends AbstractController
 {
@@ -26,5 +28,19 @@ class UserController extends AbstractController
             'user' => $user,
             'title' => 'Profil - ' . $user->getUsername()
         ]);
+    }
+
+    /**
+     * @Route("/user/avatar/remove/{user}", name="app_user_avatar_remove")
+     */
+    public function removeAvatar(User $user)
+    {
+        $user->setAvatar(null);
+        // $user->removeAvatar();
+        $this->em->merge($user);
+        
+        $this->em->flush();
+     
+        return new JsonResponse('ok');
     }
 }

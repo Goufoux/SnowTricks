@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Trick;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Entity\Media;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Util\OrderedHashMap;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class TrickController extends AbstractController
 {
@@ -45,6 +50,24 @@ class TrickController extends AbstractController
             $trick = $trickForm->getData();
             $trick->setCreatedAt(new \DateTime());
             $trick->setAuthor($this->getUser());
+
+            /** @var array $medias */
+            $medias = $trickForm->get('media')->getData();
+            /** @var array $files */
+            $files = $request->files->get('trick')['media'];
+            // dd($medias->get('media_src'));
+            
+            foreach ($files as $key => $file) {
+                /** @var UploadedFile $tempFile */
+                $tempFile = $file['media_src'];
+                $tempName = uniqid().'.'.$tempFile->guessClientExtension();
+                
+                $tempFile->move($this->getParameter('trick_directory'), $tempName);
+                $medias[$key]->setMediaSrc($tempName);
+            }
+
+            // dd($medias);
+            
             
             $this->em->persist($trick);
             $this->em->flush();
@@ -71,9 +94,20 @@ class TrickController extends AbstractController
 
         $trickForm->handleRequest($request);
 
-        $mediaGroup = $trick->getMedia();
+        $mediaGroup = new ArrayCollection();
+
+        foreach ($trick->getMedia() as $media) {
+            $mediaGroup->add($media);
+        }
 
         if ($trickForm->isSubmitted() && $trickForm->isValid()) {
+            
+            foreach ($mediaGroup as $media) {
+                if (false === $trick->getMedia()->contains($media)) {
+                    $this->em->remove($media);
+                }
+            }
+            
             /** @var Trick $trick */
             $trick = $trickForm->getData();
             $trick->setUpdatedAt(new \DateTime());
@@ -90,7 +124,8 @@ class TrickController extends AbstractController
         
 
         return $this->render('backend/trick/new.html.twig', [
-            'form' => $trickForm->createView()
+            'form' => $trickForm->createView(),
+            'trick' => $trick
         ]);
     }
 

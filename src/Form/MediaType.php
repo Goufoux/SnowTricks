@@ -15,14 +15,26 @@ class MediaType extends AbstractType
         $builder
             ->add('media_src', Type\FileType::class, [
                 'data_class' => null,
+                'required' => false
             ])
         ;
+
+        if ($options['addRegister'] === true) {
+            $builder->add('register', Type\SubmitType::class, [
+                'label' => 'Ajouter',
+                'attr' => [
+                    'class' => 'btn btn-success'
+                ]
+            ]);
+        }
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Media::class,
+            'addRegister' => false
         ]);
     }
 }

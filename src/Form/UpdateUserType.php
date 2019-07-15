@@ -13,10 +13,23 @@ class UpdateUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-            ->add('first_name')
-            ->add('email')
+            ->add('name', Type\TextType::class, [
+                'label' => 'Nom'
+            ])
+            ->add('first_name', Type\TextType::class, [
+                'label' => 'Prénom'
+            ])
+            ->add('email', Type\EmailType::class, [
+                'label' => 'Email'
+            ])
+            ->add('avatar', Type\FileType::class, [
+                'label' => 'Avatar',
+                'data_class' => null
+            ])
             ->add('register', Type\SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-info'
+                ],
                 'label' => 'Mettre à jour'
             ])
         ;
@@ -26,6 +39,7 @@ class UpdateUserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'isAdmin' => false
         ]);
     }
 }
