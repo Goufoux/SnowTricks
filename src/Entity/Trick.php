@@ -22,12 +22,12 @@ class Trick
     /**
      * @ORM\Column(type="datetime")
      */
-    private $created_at;
+    private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $updated_at;
+    private $updatedAt;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -71,7 +71,7 @@ class Trick
      * @ORM\ManyToOne(targetEntity="App\Entity\TrickGroup", inversedBy="tricks")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $trick_group;
+    private $trickGroup;
 
     public function __construct()
     {
@@ -86,24 +86,24 @@ class Trick
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -208,12 +208,12 @@ class Trick
 
     public function getTrickGroup(): ?TrickGroup
     {
-        return $this->trick_group;
+        return $this->trickGroup;
     }
 
-    public function setTrickGroup(?TrickGroup $trick_group): self
+    public function setTrickGroup(?TrickGroup $trickGroup): self
     {
-        $this->trick_group = $trick_group;
+        $this->trickGroup = $trickGroup;
 
         return $this;
     }

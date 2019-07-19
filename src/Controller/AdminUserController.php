@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Backend;
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,15 +14,9 @@ use App\Form\UpdateUserType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\FormInterface;
-use App\Form\MediaType;
-use App\Form\AvatarType;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use App\Entity\Avatar;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\FileService;
 
-class UserController extends AbstractController
+class AdminUserController extends AbstractController
 {
     private $em;
 
@@ -32,11 +26,11 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("admi/admin/user/", name="app_admin_user")
+     * @Route("/admin/user/", name="app_admin_user")
      */
     public function index()
     {
-        $users = $this->em->getRepository(User::class)->findBy([], ['created_at' => 'DESC']);
+        $users = $this->em->getRepository(User::class)->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('backend/user/index.html.twig', [
             'users' => $users
@@ -53,7 +47,6 @@ class UserController extends AbstractController
     {
         $userForm = $this->createForm(RegistrationType::class, null, ['isAdmin' => true]);
 
-        // dd($request);
         $userForm->handleRequest($request);
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
@@ -86,33 +79,30 @@ class UserController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function update(User $user, Request $request, UserPasswordEncoderInterface $encoder)
+    public function update(User $user, Request $request, UserPasswordEncoderInterface $encoder, FileService $fileService)
     {
-        $userForm = $this->createForm(UpdateUserType::class, $user, ['isAdmin' => true]);
+        $userForm = $this->createForm(UpdateUserType::class, $user, ['isAdmin' => true, 'hasRoleAdmin' => false]);
         $userForm->handleRequest($request);
 
         $passwordForm = $this->createForm(PasswordUpdateType::class);
         $passwordForm->handleRequest($request);
-
+        
         if ($userForm->isSubmitted() && $userForm->isValid()) {
-
             /** @var User $user */
             $user = $userForm->getData();
-            
-            if (!empty($request->files)) {
-                /** @var UploadedFile $avatar */
-                $avatar = $request->files->get('update_user')['avatar'];
-                $fileName = uniqid().'.'.$avatar->guessClientExtension();
-                $user->setAvatar($fileName);
-                $avatar->move($this->getParameter('avatar_directory'), $fileName);
+            $user->setUpdatedAt(new \DateTime());
+
+            if (null !== $user->getFile()) {
+                $fileService->uploadFile($user->getFile(), 'avatar_directory');
+                $user->setFile(null);
+                $user->setAvatar($fileService->getFileName());
             }
             
-            $user->setUpdatedAt(new \DateTime());
             $this->em->merge($user);
             $this->em->flush();
             $this->addFlash('success', 'user updated!');
 
-            return new RedirectResponse($this->generateUrl('app_admin_user'));
+            return new RedirectResponse($this->generateUrl('app_admin_user_update', ['user' => $user->getId()]));
         }
 
         if ($this->verifyPasswordForm($passwordForm, $user, $encoder)) {
@@ -126,53 +116,13 @@ class UserController extends AbstractController
         ]);
     }
 
-    private function uploadAvatar(FormInterface $form, User $user)
-    {
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $file */
-            $file = $form->get('avatar_src')->getData();
-            // dd($form->get('avatar_src'));
-            $fs = new Filesystem();
-            $mediaName = uniqid();
-            $ext = $file->getClientOriginalExtension();
-            try {
-                $file->move($this->getParameter('avatar_directory'), $mediaName.'.'.$ext);
-
-                if ($user->getAvatar() === null) {
-                    $avatar = new Avatar();
-                    $avatar->setUser($user);
-                } else {
-                    $avatar = $user->getAvatar();
-                }
-                
-                $avatar->setAvatarSrc($mediaName.'.'.$ext);
-
-                $user->setAvatar($avatar);
-
-                // $user->getAvatar()->setAvatarSrc($mediaName.'.'.$ext);
-
-                $this->em->merge($user);
-
-                $this->em->flush();
-
-                $this->addFlash('success', 'File uploaded');
-            } catch (FileException $e) {
-                $this->addFlash('danger', $e->getMessage());
-            }
-            // dd($file->guessExtension(), $form, $mediaName);
-            return true;
-        }
-
-        return false;
-    }
-
     private function verifyPasswordForm(FormInterface $passwordForm, User $user, UserPasswordEncoderInterface $encoder)
     {
         if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
             
             $oldPassword = $passwordForm->get('old_password')->getData();
 
-            if (password_verify($oldPassword, $user->getPassword()) === false) {
+            if (false === password_verify($oldPassword, $user->getPassword())) {
                 $passwordForm->get('old_password')->addError(new FormError('Mot de passe incorrect'));
 
                 return false;

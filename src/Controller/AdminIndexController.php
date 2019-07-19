@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Backend;
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Entity\Trick;
 use App\Entity\Comment;
 
-class IndexController extends AbstractController
+class AdminIndexController extends AbstractController
 {
     private $em;
 
@@ -23,11 +23,11 @@ class IndexController extends AbstractController
      */
     public function index()
     {
-        $lastRegisteredUsers = $this->em->getRepository(User::class)->findBy([], ['created_at' => 'DESC'], 5); 
+        $lastRegisteredUsers = $this->em->getRepository(User::class)->findBy([], ['createdAt' => 'DESC'], 5); 
 
-        $lastTricksAdded = $this->em->getRepository(Trick::class)->findBy([], ['created_at' => 'DESC'], 5);
+        $lastTricksAdded = $this->em->getRepository(Trick::class)->findBy([], ['createdAt' => 'DESC'], 5);
 
-        $lastCommentsAdded = $this->em->getRepository(Comment::class)->findBy([], ['created_at' => 'DESC'], 5);
+        $lastCommentsAdded = $this->em->getRepository(Comment::class)->findBy([], ['createdAt' => 'DESC'], 5);
 
         return $this->render('backend/index.html.twig', [
             'title' => 'SnowTricks - Backend',

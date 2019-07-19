@@ -12,15 +12,17 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class TricksFixtures extends Fixture
 {
+    const DEFAULT_PASSWORD = 'password';
+    
     private $faker;
     private $encoder;
-    const DEFAULT_PASSWORD = 'password';
 
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
         $this->encoder = $encoder;
         $this->faker = Faker\Factory::create('fr_FR');
     }
+    
     public function load(ObjectManager $manager)
     {
         $this->createUsers($manager);

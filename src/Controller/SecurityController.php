@@ -1,23 +1,39 @@
 <?php
 
-namespace App\Controller\Frontend;
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\RegistrationType;
-use Symfony\Component\HttpFoundation\Request;
-use App\Entity\User;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use App\Form\RegistrationType;
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class RegisterController extends AbstractController
+class SecurityController extends AbstractController
 {
     private $em;
 
     public function __construct(ObjectManager $em)
     {
         $this->em = $em;
+    }
+
+    /**
+     * @Route("/login", name="app_login")
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('frontend/security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error, 'title' => 'SnowTricks - Connexion']);
     }
 
     /**
@@ -55,33 +71,6 @@ class RegisterController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/register/{token}", name="app_register_confirm")
-     *
-     * @param [string] $token
-     */
-    public function confirmRegistration($token)
-    {
-        /** @var User $user */
-        $user = $this->em->getRepository(User::class)->findOneBy(['register_token' => $token]);
-
-        if ($user === null) {
-            $this->addFlash('danger', 'Token invalid.');
-            return new RedirectResponse($this->generateUrl('app_index'));
-        }
-
-        $user->setActive(true);
-        $user->setRegisterToken(null);
-        
-        $this->em->merge($user);
-        $this->em->flush();
-
-        $this->addFlash('success', 'Compte activé. Vous pouvez désormais vous connecter.');
-
-        return new RedirectResponse($this->generateUrl('app_index'));
-
-    }
-
     private function sendRegisterMail(User $user, \Swift_Mailer $mailer)
     {
         $message = (new \Swift_Message('Inscription sur SnowTricks !'))
@@ -107,5 +96,34 @@ class RegisterController extends AbstractController
     public function welcome()
     {
         return $this->render('frontend/register/welcome.html.twig');
+    }
+
+    /**
+     * @Route("/register/{token}", name="app_register_confirm")
+     * @ParamConverter("user", class="Entity:User")
+     *
+     * @param [string] $token
+     */
+    public function confirmRegistration(User $user)
+    {
+        $user->setActive(true);
+        $user->setRegisterToken(null);
+        
+        $this->em->merge($user);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Compte activé. Vous pouvez désormais vous connecter.');
+
+        return new RedirectResponse($this->generateUrl('app_index'));
+
+    }
+
+
+    /**
+     * @Route("/logout", name="app_logout", methods={"GET"})
+     */
+    public function logout()
+    {
+        
     }
 }

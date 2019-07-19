@@ -1,0 +1,53 @@
+{% extends "backend/base.html.twig" %}
+{% block body %}
+<h1 class="col-12 mt-2">
+    {% if trick is empty %}
+        <i class="fa fa-plus-circle mr-2"></i>
+        Nouveau Trick
+    {% else %}
+        <i class="fa fa-pencil mr-2"></i>
+        {{ trick.name }}
+    {% endif %}
+</h1>
+<div class="col-xl-6 col-md-12 mx-auto">
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_row(form.name) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.trickGroup) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.description) }}
+    </div>
+    <ul class="medias list-group my-2" id="media-fields-list"
+        data-prototype="{{ form_widget(form.media.vars.prototype)|e('html_attr') }}"
+        data-widget-tags="{{ '<li></li>'|e }}"
+        data-widget-counter="{{ form.children|length }}">
+    </ul>
+    <div class="form-group text-right">
+        {% if trick is not empty %}
+            <input type="submit" value="Mettre à jour" class="btn btn-info">            
+        {% else %}
+            <input type="submit" value="Ajouter" class="btn btn-success">
+        {% endif %}
+    </div>
+    {{ form_end(form) }}
+</div>
+{% if trick is not empty %}
+    <div class="col-xl-2">
+        <h3 class="h4">Image(s)</h3>
+        {% for image in trick.media %}
+            <img src="{{ asset('img/trick/'~image.mediaSrc) }}" alt="Image" class="img-fluid delete-image" 
+                data-key="{{ image.id }}"
+                data-elm="trick"
+                data-type="media"
+                >
+        {% else %}
+            <alert class="alert-info">
+                <h5 class="alert-heading">Aucune image</h5>
+            </alert>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

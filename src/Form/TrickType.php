@@ -16,27 +16,23 @@ class TrickType extends AbstractType
     {
         $builder
             ->add('name', Type\TextType::class, [
-                'required' => true
+                'required' => true,
+                'label' => 'Nom'
             ])
             ->add('description', Type\TextareaType::class)
             ->add('trickGroup', EntityType::class, [
                 'class' => TrickGroup::class,
                 'choice_label' => 'label',
-                'placeholder' => 'Group ?',
+                'placeholder' => 'Groupe',
                 'required' => true
             ])
             ->add('media', Type\CollectionType::class, [
                 'entry_type' => MediaType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                // 'by_reference' => false,
-                'data_class' => null
-            ])
-            ->add('register', Type\SubmitType::class, [
-                'label' => ($options['forAdd'] === true) ? 'Ajouter' : 'Mettre à jour',
-                'attr' => [
-                    'class' => ($options['forAdd'] === true) ? 'btn btn-success' : 'btn btn-info'
-                ]
+                'data_class' => null,
+                'label' => false,
+                'mapped' => false
             ])
         ;
     }
@@ -44,8 +40,7 @@ class TrickType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Trick::class,
-            'forAdd' => true
+            'data_class' => Trick::class
         ]);
     }
 }

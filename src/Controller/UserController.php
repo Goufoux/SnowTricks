@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controller\Frontend;
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Entity\Avatar;
+use App\Service\FileService;
 
 class UserController extends AbstractController
 {
@@ -33,10 +33,10 @@ class UserController extends AbstractController
     /**
      * @Route("/user/avatar/remove/{user}", name="app_user_avatar_remove")
      */
-    public function removeAvatar(User $user)
+    public function removeAvatar(User $user, FileService $fileService)
     {
+        $fileService->deleteFile('avatar_directory', $user->getAvatar());
         $user->setAvatar(null);
-        // $user->removeAvatar();
         $this->em->merge($user);
         
         $this->em->flush();

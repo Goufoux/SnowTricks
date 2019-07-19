@@ -21,7 +21,7 @@ class TrickGroup
     /**
      * @ORM\Column(type="datetime")
      */
-    private $created_at;
+    private $createdAt;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -29,7 +29,7 @@ class TrickGroup
     private $label;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Trick", mappedBy="trick_group")
+     * @ORM\OneToMany(targetEntity="App\Entity\Trick", mappedBy="trickGroup")
      */
     private $tricks;
 
@@ -45,12 +45,12 @@ class TrickGroup
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }

@@ -33,9 +33,11 @@ $(document).ready(function() {
     // remove an image
     $('.delete-image').on('click', function() {
         var $this = $(this);
-        var user = $this.data('user');
+        var key = $this.data('key');
+        var elm = $this.data('elm');
+        var type = $this.data('type');
         $.get({
-            url: "/user/avatar/remove/"+user,
+            url: "/"+elm+"/"+type+"/remove/"+key,
             success: function (data) {
                 $this.fadeOut();
             },

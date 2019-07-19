@@ -16,7 +16,10 @@
             {{ form_start(user_form) }}
             {{ form_end(user_form) }}
             {% if user.avatar is not empty %}
-                <img src="{{ asset('/img/avatar/')~user.avatar }}" alt="test" class="img-fluid delete-image" data-user="{{ user.id }}">            
+                <img src="{{ asset('/img/avatar/')~user.avatar }}" alt="test" class="img-fluid delete-image" 
+                    data-key="{{ user.id }}"
+                    data-elm="user"
+                    data-type="avatar">            
             {% endif %}
         </div>
         <div class="col-lg-6 col-sm-12">
