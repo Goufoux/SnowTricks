@@ -44,7 +44,27 @@ $(document).ready(function() {
             error: function(e) {
                 console.log("error", e);
             }
-        })
-    })
+        });
+    });
 
+    // remove video
+    $('.delete-video').on('click', function() {
+        var $this = $(this);
+        var key = $this.data('key');
+        $.get({
+            url: "/trick/video/remove/"+key,
+            success: function (data) {
+                $('#iframe-'+key).fadeOut('slow', function () {
+                    $('#iframe-'+key).remove();
+                    console.log($('.video-bloc .bloc-iframe').length);
+                    if ($('.video-bloc .bloc-iframe').length <= 0) {
+                        $('.video-bloc').append($('<div class="alert alert-info"><h5 class="alert-heading">Aucune vidéo</h5></div>'));
+                    }
+                });
+            },
+            error: function (e) {
+                console.log('error', e.responseJSON);
+            }
+        });
+    });
 });

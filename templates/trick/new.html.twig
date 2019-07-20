@@ -1,6 +1,6 @@
 {% extends "backend/base.html.twig" %}
 {% block body %}
-<h1 class="col-12 mt-2">
+<h1 class="col-12 mt-2 h3">
     {% if trick is empty %}
         <i class="fa fa-plus-circle mr-2"></i>
         Nouveau Trick
@@ -20,10 +20,18 @@
     <div class="form-group">
         {{ form_row(form.description) }}
     </div>
-    <ul class="medias list-group my-2" id="media-fields-list"
+    <h2 class="h4">Ajouter des images</h2>
+    <ul class="collections list-group my-2" id="media-fields-list"
         data-prototype="{{ form_widget(form.media.vars.prototype)|e('html_attr') }}"
         data-widget-tags="{{ '<li></li>'|e }}"
         data-widget-counter="{{ form.children|length }}">
+    </ul>
+    <h2 class="h4">Ajouter des vidéos</h2>
+    <ul class="collections list-group my-2" id="videoLinks-fiels-list"
+        data-prototype="{{ form_widget(form.videoLinks.vars.prototype)|e('html_attr') }}"
+        data-widget-tags="{{ '<li class="list-group-item"></li>'|e }}"
+        data-widget-counter="{{ form.children|length }}">
+
     </ul>
     <div class="form-group text-right">
         {% if trick is not empty %}
@@ -44,10 +52,25 @@
                 data-type="media"
                 >
         {% else %}
-            <alert class="alert-info">
+            <div class="alert alert-info">
                 <h5 class="alert-heading">Aucune image</h5>
-            </alert>
+            </div>
         {% endfor %}
+        <h3 class="h4">Vidéo(s)</h3>
+        <div class="video-bloc">
+            {% if trick.videoLinks is not empty %}
+                {% for video in trick.videoLinks %}
+                <div class="bloc-iframe" id="iframe-{{ video.id }}">
+                    <i class="fa fa-trash delete-video" data-key="{{ video.id }}"></i>
+                    {{ video.source|raw }}
+                </div>
+                {% endfor %}
+            {% else %}  
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Aucune vidéo</h5>
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endif %}
 {% endblock %}

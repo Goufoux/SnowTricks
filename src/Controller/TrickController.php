@@ -2,29 +2,21 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\TrickType;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Trick;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Entity\Media;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use App\Service\FileService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\VideoLink;
 
-class TrickController extends AbstractController
+class TrickController extends ObjectManagerController
 {
-    private $em;
-
-    public function __construct(ObjectManager $em)
-    {
-        $this->em = $em;
-    }
-
     /**
-     * @Route("/trick/", name="app_trick")
+     * @Route("/trick/")
      * @Template()
      */
     public function index()
@@ -55,20 +47,23 @@ class TrickController extends AbstractController
 
             /** @var array $files */
             $files = $request->files->get('trick')['media'] ?? [];
+
+            $videoLinks = $request->request->get('trick')['videoLinks'] ?? [];
             
             $this->addFilesToTrick($files, $fileService, $trick);
+
+            $this->addVideoLinksToTrick($videoLinks, $trick);
             
             if (null === $trick->getId()) {
                 $this->em->persist($trick);
                 $this->addFlash('success', 'Trick créé !');
             } else {
-                $this->em->merge($trick);
                 $this->addFlash('info', 'Trick mis à jour !');
             }
             
             $this->em->flush();
 
-            return new RedirectResponse($this->generateUrl('app_trick_new', ['trick' => $trick]));
+            return new RedirectResponse($this->generateUrl('app_trick_update', ['trick' => $trick->getId()]));
         }
 
         return [
@@ -88,8 +83,19 @@ class TrickController extends AbstractController
         }
     }
 
+    private function addVideoLinksToTrick(array $videoLinks, Trick $trick)
+    {
+        foreach ($videoLinks as $source) {
+            $videoLink = new VideoLink();
+            $videoLink->setSource($source['source']);
+            $videoLink->setCreatedAt(new \DateTime());
+            $videoLink->setTrick($trick);
+            $trick->addVideoLink($videoLink); 
+        }
+    }
+
     /**
-     * @Route("/trick/remove/{trick}", name="app_trick_remove")
+     * @Route("/trick/remove/{trick}")
      *
      * @param Trick $trick
      * @return RedirectResponse
@@ -99,9 +105,9 @@ class TrickController extends AbstractController
         $this->em->remove($trick);
         $this->em->flush();
 
-        $this->addFlash('danger', 'trick removed!');
+        $this->addFlash('danger', 'Trick supprimé !');
         
-        return new RedirectResponse($this->generateUrl('app_trick'));
+        return new RedirectResponse($this->generateUrl('app_trick_index'));
     }
 
     /**

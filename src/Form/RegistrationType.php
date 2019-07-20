@@ -7,7 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type as Type;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class RegistrationType extends AbstractType
 {
@@ -31,15 +30,6 @@ class RegistrationType extends AbstractType
                 'second_options' => ['label' => 'Confirmation du mot de passe']
             ])
         ;
-
-        if ($options['isAdmin'] === true) {
-            $builder->add('roles', Type\CheckboxType::class, [
-                'label' => 'ROLE_ADMIN',
-                'required' => false,
-                'mapped' => false,
-                'attr' => ['checked' => ($options['hasRoleAdmin'] === true) ? 'checked' : '']
-            ]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

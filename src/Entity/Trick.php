@@ -6,9 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrickRepository")
+ * @UniqueEntity(
+ *  fields={"name"},
+ *  message="Un trick nommé {{ value }} existe déjà")
  */
 class Trick
 {
@@ -30,7 +35,7 @@ class Trick
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, unique=true)
      * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
      * @Assert\Length(
      *  min=3, 
@@ -58,7 +63,7 @@ class Trick
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick", cascade={"persist", "merge", "remove"})
      */
     private $media;
 
@@ -73,10 +78,22 @@ class Trick
      */
     private $trickGroup;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoLink", mappedBy="trick", cascade={"persist", "merge", "remove"})
+     */
+    private $videoLinks;
+
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=255, unique=true)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->videoLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,6 +157,18 @@ class Trick
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -214,6 +243,37 @@ class Trick
     public function setTrickGroup(?TrickGroup $trickGroup): self
     {
         $this->trickGroup = $trickGroup;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|VideoLink[]
+     */
+    public function getVideoLinks(): Collection
+    {
+        return $this->videoLinks;
+    }
+
+    public function addVideoLink(VideoLink $videoLink): self
+    {
+        if (!$this->videoLinks->contains($videoLink)) {
+            $this->videoLinks[] = $videoLink;
+            $videoLink->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideoLink(VideoLink $videoLink): self
+    {
+        if ($this->videoLinks->contains($videoLink)) {
+            $this->videoLinks->removeElement($videoLink);
+            // set the owning side to null (unless already changed)
+            if ($videoLink->getTrick() === $this) {
+                $videoLink->setTrick(null);
+            }
+        }
 
         return $this;
     }

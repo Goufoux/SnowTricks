@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{{ title ?? 'SnowTricks' }}</title>
+        <title>{{ title|default('SnowTricks') }}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('backend-global') }}
         {% endblock %}

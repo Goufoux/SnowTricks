@@ -29,7 +29,7 @@ class FileService
 
     public function deleteFile(string $directory, string $fileName)
     {
-        $state = unlink($directory.$fileName);
+        $state = unlink($this->params->get($directory).$fileName);
 
         return $state;
     }

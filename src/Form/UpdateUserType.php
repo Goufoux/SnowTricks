@@ -16,13 +16,13 @@ class UpdateUserType extends AbstractType
             ->add('name', Type\TextType::class, [
                 'label' => 'Nom'
             ])
-            ->add('first_name', Type\TextType::class, [
+            ->add('firstName', Type\TextType::class, [
                 'label' => 'Prénom'
             ])
             ->add('email', Type\EmailType::class, [
                 'label' => 'Email'
             ])
-            ->add('avatar', Type\FileType::class, [
+            ->add('file', Type\FileType::class, [
                 'label' => 'Avatar',
                 'data_class' => null,
                 'required' => false
@@ -32,7 +32,9 @@ class UpdateUserType extends AbstractType
                     'label' => 'ROLE_ADMIN',
                     'required' => false,
                     'mapped' => false,
-                    'attr' => ['checked' => ($options['hasRoleAdmin'] === true) ? 'checked' : '']
+                    'attr' => [
+                        'checked' => $options['hasRoleAdmin']
+                    ]
                 ]);
             }
         $builder->add('register', Type\SubmitType::class, [

@@ -29,7 +29,13 @@ class TrickType extends AbstractType
             ->add('media', Type\CollectionType::class, [
                 'entry_type' => MediaType::class,
                 'allow_add' => true,
-                'allow_delete' => true,
+                'data_class' => null,
+                'label' => false,
+                'mapped' => false
+            ])
+            ->add('videoLinks', Type\CollectionType::class, [
+                'entry_type' => VideoLinkType::class,
+                'allow_add' => true,
                 'data_class' => null,
                 'label' => false,
                 'mapped' => false

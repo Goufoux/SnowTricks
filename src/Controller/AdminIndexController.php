@@ -2,24 +2,17 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
 use App\Entity\Trick;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use App\Entity\Comment;
 
-class AdminIndexController extends AbstractController
+class AdminIndexController extends ObjectManagerController
 {
-    private $em;
-
-    public function __construct(ObjectManager $em)
-    {
-        $this->em = $em;
-    }
-
     /**
-     * @Route("/admin", name="app_admin_index")
+     * @Route("/admin")
+     * @Template()
      */
     public function index()
     {
@@ -29,11 +22,11 @@ class AdminIndexController extends AbstractController
 
         $lastCommentsAdded = $this->em->getRepository(Comment::class)->findBy([], ['createdAt' => 'DESC'], 5);
 
-        return $this->render('backend/index.html.twig', [
+        return [
             'title' => 'SnowTricks - Backend',
             'users' => $lastRegisteredUsers,
             'tricks' => $lastTricksAdded,
             'comments' => $lastCommentsAdded
-        ]);
+        ];
     }
 }

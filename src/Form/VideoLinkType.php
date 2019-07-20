@@ -2,26 +2,30 @@
 
 namespace App\Form;
 
-use App\Entity\TrickGroup;
+use App\Entity\VideoLink;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type as Type;
 
-class TrickGroupType extends AbstractType
+class VideoLinkType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label', Type\TextType::class)
+            ->add('source', Type\TextareaType::class, [
+                'data_class' => null,
+                'attr' => [
+                    'placeholder' => 'Coller la balise \'IFRAME\' de la vidéo ici'
+                ]
+            ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => TrickGroup::class,
-            'forAdd' => true
+            'data_class' => VideoLink::class,
         ]);
     }
 }

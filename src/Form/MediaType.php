@@ -16,7 +16,6 @@ class MediaType extends AbstractType
         $builder
             ->add('file', Type\FileType::class, [
                 'data_class' => null,
-                // 'by_reference' => false,
                 'label' => 'Image/Vidéo',
                 'constraints' => [
                     new File([
@@ -29,25 +28,14 @@ class MediaType extends AbstractType
                         'mimeTypesMessage' => 'Merci de choisir une image PNG ou JPEG'
                     ])
                 ]
-                // 'mapped' => false
             ])
         ;
-
-        if ($options['addRegister'] === true) {
-            $builder->add('register', Type\SubmitType::class, [
-                'label' => 'Ajouter',
-                'attr' => [
-                    'class' => 'btn btn-success'
-                ]
-            ]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Media::class,
-            'addRegister' => false
+            'data_class' => Media::class
         ]);
     }
 }

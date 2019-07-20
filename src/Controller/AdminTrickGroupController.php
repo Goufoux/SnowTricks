@@ -2,97 +2,72 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\TrickGroupType;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\TrickGroup;
-use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class AdminTrickGroupController extends AbstractController
+class AdminTrickGroupController extends ObjectManagerController
 {
-    private $em;
-
-    public function __construct(ObjectManager $em)
-    {
-        $this->em = $em;
-    }
-
     /**
-     * @Route("/admin/trick/group/", name="app_admin_trick_group")
+     * @Route("/admin/trick/group/")
+     * @Template()
      */
     public function index()
     {
         $trickGroups = $this->em->getRepository(TrickGroup::class)->findAll();
 
-        return $this->render('backend/trickgroup/index.html.twig', [
+        return [
             'groups' => $trickGroups
-        ]);       
+        ];       
     }
 
     /**
-     * @Route("/admin/trick/group/new", name="app_admin_trick_group_new")
+     * @Route("/admin/trick/group/new")
+     * @Route("/admin/trick/group/{trickGroup}/", name="app_admintrickgroup_update")
+     * @Template()
      */
-    public function new(Request $request)
+    public function new(Request $request, TrickGroup $trickGroup = null)
     {
-        $trickGroupForm = $this->createForm(TrickGroupType::class);
+        $trickGroupForm = $this->createForm(TrickGroupType::class, $trickGroup);
 
         $trickGroupForm->handleRequest($request);
 
         if ($trickGroupForm->isSubmitted() && $trickGroupForm->isValid()) {
             /** @var TrickGroup $trickGroup */
             $trickGroup = $trickGroupForm->getData();
-            $trickGroup->setCreatedAt(new \DateTime());
-            $this->em->persist($trickGroup);
-            $this->em->flush();
-            $this->addFlash('success', 'Trick group added');
+            
+            if (null === $trickGroup->getId()) {
+                $trickGroup->setCreatedAt(new \DateTime());
+                $this->em->persist($trickGroup);
+                $this->addFlash('success', 'Groupe de trick ajouté !');
+            } else {
+                $this->addFlash('success', 'Groupe de trick mise à jour !');
+            }
 
-            return new RedirectResponse($this->generateUrl('app_admin_trick_group'));
+            $this->em->flush();
+
+            return new RedirectResponse($this->generateUrl('app_admintrickgroup_index'));
         }
 
-        return $this->render('backend/trickgroup/new.html.twig', [
-            'form' => $trickGroupForm->createView()
-        ]);
+        return [
+            'form' => $trickGroupForm->createView(),
+            'trickGroup' => $trickGroup
+        ];
     }
 
     /**
-     * @Route("/admin/trick/group/{trickGroup}/", name="app_admin_trick_group_update",
-     *  requirements={
-     *      "trickGroup":"\d+"
-     *  })
+     * @Route("/admin/trick/group/remove/{trickGroup}/")
      */
-    public function update(TrickGroup $trickGroup, Request $request)
-    {
-        $trickGroupForm = $this->createForm(TrickGroupType::class, $trickGroup, ['forAdd' => false]);
-
-        $trickGroupForm->handleRequest($request);
-
-        if ($trickGroupForm->isSubmitted() && $trickGroupForm->isValid()) {
-            /** @var TrickGroup $trickGroup */
-            $trickGroup = $trickGroupForm->getData();
-            $this->em->merge($trickGroup);
-            $this->em->flush();
-            $this->addFlash('success', 'Trick group updated');
-
-            return new RedirectResponse($this->generateUrl('app_admin_trick_group'));
-        }
-
-        return $this->render('backend/trickgroup/new.html.twig', [
-            'form' => $trickGroupForm->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/admin/trick/group/remove/{trickGroup}/", name="app_admin_trick_group_remove")
-     */
-    public function removeTrick(TrickGroup $trickGroup)
+    public function remove(TrickGroup $trickGroup)
     {
         $this->em->remove($trickGroup);
         $this->em->flush();
 
-        $this->addFlash('danger', 'trick group has been removed!');
+        $this->addFlash('danger', 'Groupe de trick supprimé !');
 
-        return new RedirectResponse($this->generateUrl('app_admin_trick_group'));
+        return new RedirectResponse($this->generateUrl('app_admintrickgroup_index'));
     }
 }

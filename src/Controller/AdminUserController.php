@@ -7,14 +7,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
-use App\Form\RegistrationType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Form\PasswordUpdateType;
 use App\Form\UpdateUserType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\FormInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use App\Service\FileService;
+use App\Form\UserType;
 
 class AdminUserController extends AbstractController
 {
@@ -26,26 +27,28 @@ class AdminUserController extends AbstractController
     }
 
     /**
-     * @Route("/admin/user/", name="app_admin_user")
+     * @Route("/admin/user/")
+     * @Template()
      */
     public function index()
     {
         $users = $this->em->getRepository(User::class)->findBy([], ['createdAt' => 'DESC']);
 
-        return $this->render('backend/user/index.html.twig', [
+        return [
             'users' => $users
-        ]);
+        ];
     }
 
     /**
-     * @Route("/admin/user/new", name="app_admin_user_new")
+     * @Route("/admin/user/new")
+     * @Template()
      *
      * @param Request $request
      * @return void
      */
     public function new(Request $request, UserPasswordEncoderInterface $encoder)
     {
-        $userForm = $this->createForm(RegistrationType::class, null, ['isAdmin' => true]);
+        $userForm = $this->createForm(UserType::class);
 
         $userForm->handleRequest($request);
 
@@ -62,18 +65,19 @@ class AdminUserController extends AbstractController
             $this->em->persist($user);
             $this->em->flush();
 
-            $this->addFlash('success', 'user added!');
+            $this->addFlash('success', 'Utilisater ajouté !');
 
-            return new RedirectResponse($this->generateUrl('app_admin_user'));
+            return new RedirectResponse($this->generateUrl('app_adminuser_index'));
         }
 
-        return $this->render('backend/user/new.html.twig', [
+        return [
             'form' => $userForm->createView()
-        ]);
+        ];
     }
 
     /**
-     * @Route("/admin/user/update/{user}", name="app_admin_user_update")
+     * @Route("/admin/user/update/{user}")
+     * @Template()
      *
      * @param User $user
      * @param Request $request
@@ -81,7 +85,7 @@ class AdminUserController extends AbstractController
      */
     public function update(User $user, Request $request, UserPasswordEncoderInterface $encoder, FileService $fileService)
     {
-        $userForm = $this->createForm(UpdateUserType::class, $user, ['isAdmin' => true, 'hasRoleAdmin' => false]);
+        $userForm = $this->createForm(UpdateUserType::class, $user, ['isAdmin' => true, 'hasRoleAdmin' => $user->hasRoleAdmin()]);
         $userForm->handleRequest($request);
 
         $passwordForm = $this->createForm(PasswordUpdateType::class);
@@ -97,23 +101,30 @@ class AdminUserController extends AbstractController
                 $user->setFile(null);
                 $user->setAvatar($fileService->getFileName());
             }
-            
-            $this->em->merge($user);
-            $this->em->flush();
-            $this->addFlash('success', 'user updated!');
 
-            return new RedirectResponse($this->generateUrl('app_admin_user_update', ['user' => $user->getId()]));
+            if (true === $userForm->get('roles')->getData() && false === $user->hasRoleAdmin()) {
+                $user->setRoles(['ROLE_ADMIN']);
+            }
+
+            if (false === $userForm->get('roles')->getData() && true === $user->hasRoleAdmin()) {
+                $user->setRoles([]);
+            }
+            
+            $this->em->flush();
+            $this->addFlash('success', 'Utilisateur mise à jour !');
+
+            return new RedirectResponse($this->generateUrl('app_adminuser_update', ['user' => $user->getId()]));
         }
 
         if ($this->verifyPasswordForm($passwordForm, $user, $encoder)) {
-            return new RedirectResponse($this->generateUrl('app_admin_user_update', ['user' => $user->getId()]));
+            return new RedirectResponse($this->generateUrl('app_adminuser_update', ['user' => $user->getId()]));
         }
 
-        return $this->render('backend/user/update.html.twig', [
+        return [
             'user_form' => $userForm->createView(),
             'password_form' => $passwordForm->createView(),
             'user' => $user
-        ]);
+        ];
     }
 
     private function verifyPasswordForm(FormInterface $passwordForm, User $user, UserPasswordEncoderInterface $encoder)
@@ -143,7 +154,7 @@ class AdminUserController extends AbstractController
     }
 
     /**
-     * @Route("/admin/user/remove/{user}", name="app_admin_user_remove")
+     * @Route("/admin/user/remove/{user}")
      *
      * @param User $user
      * @return void
@@ -153,8 +164,8 @@ class AdminUserController extends AbstractController
         $this->em->remove($user);
         $this->em->flush();
 
-        $this->addFlash('danger', 'user has been deleted !');
+        $this->addFlash('danger', 'Utilisateur supprimé !');
 
-        return new RedirectResponse($this->generateUrl('app_admin_user'));
+        return new RedirectResponse($this->generateUrl('app_adminuser_index'));
     }
 }

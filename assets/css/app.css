@@ -47,3 +47,23 @@
     width: 100%;
     border: solid red;
 }
+.bloc-iframe {
+    border: solid yellowgreen;
+    position: relative;
+    display: inline-block;
+    height: 260px;
+    width: 380px;
+    overflow: hidden;
+    /* width: 200% !important;
+    height: 50%; */
+    transition: all .5s;
+}
+.bloc-iframe:hover {
+    background-color: aqua;
+}
+iframe {
+    border: solid red;
+    max-height: 240px !important;
+    max-width: 360px !important;
+    position: absolute;
+}

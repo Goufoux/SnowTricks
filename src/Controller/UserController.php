@@ -2,42 +2,34 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\FileService;
 
-class UserController extends AbstractController
+class UserController extends ObjectManagerController
 {
-    private $em;
-
-    public function __construct(ObjectManager $em)
-    {
-        $this->em = $em;
-    }
-
     /**
-     * @Route("/user/{user}", name="app_user_view")
+     * @Route("/user/{user}")
+     * @Template()
      * @param User $user
      */
     public function view(User $user)
     {
-        return $this->render('frontend/user/view.html.twig', [
+        return [
             'user' => $user,
             'title' => 'Profil - ' . $user->getUsername()
-        ]);
+        ];
     }
 
     /**
-     * @Route("/user/avatar/remove/{user}", name="app_user_avatar_remove")
+     * @Route("/user/avatar/remove/{user}")
      */
     public function removeAvatar(User $user, FileService $fileService)
     {
         $fileService->deleteFile('avatar_directory', $user->getAvatar());
         $user->setAvatar(null);
-        $this->em->merge($user);
         
         $this->em->flush();
      

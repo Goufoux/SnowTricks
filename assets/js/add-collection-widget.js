@@ -1,48 +1,48 @@
 var $addTagLink = $('<div class="text-right"><a href="#" class="add_tag_link btn btn-info">Ajouter un média</a></div>');
-var $newLinkLi = $('<li class="list-group-item"></li>').append($addTagLink);
 
 $(document).ready(function() {
     console.log('ready');
     
     
-
+    
     // Get the ul that holds the collection of tags
-   var $collectionHolder = $('ul.medias');
+    var $collectionHolder = $('ul.collections');
+
     
     // add the "add a tag" anchor and li to the tags ul
+    var $newLinkLi = $('<li class="list-group-item"></li>').append($addTagLink);
     $collectionHolder.append($newLinkLi);
+
+
+    
+    // $('ul.collections').each(function () {
+    //     console.log($(this));
+    //     $(this).append($newLinkLi);
+    // })
     
     // count the current form inputs we have (e.g. 2), use that as the new
     // index when inserting a new item (e.g. 2)
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
-
-    $('ul.medias li').each(function() {
-        if ($(this.children).hasClass('text-right')) {
-            return;
-        }
-        $(this.children).append('<a href="#" class="remove-tag">x</a>');
-        // handle the removal, just for this example
-        $('.remove-tag').click(function(e) {
-            e.preventDefault();
-            
-            $(this).parent().parent().remove();
-            
-            return false;
-        });
-    });
     
-    $addTagLink.on('click', function(e) {
+    $('div.text-right .add_tag_link').on('click', function(e) {
         // prevent the link from creating a "#" on the URL
         e.preventDefault();
+
+        var $newLinkLi = $(this).parent().parent().parent().append($newLinkLi);
+        $collectionHolder = $(this).parent().parent().parent();
+        // console.log($test) 
+        // return
         
         // add a new tag form (see code block below)
-        addTagForm($collectionHolder, $newLinkLi);
+        addTagForm($collectionHolder, $newLinkLi, $(this));
     });
     
     
 });
 
-function addTagForm($collectionHolder, $newLinkLi) {
+function addTagForm($collectionHolder, $newLinkLi, $elm) {
+    // console.log($elm); 
+    // return;
     // Get the data-prototype explained earlier
     var prototype = $collectionHolder.data('prototype');
     
@@ -60,8 +60,14 @@ function addTagForm($collectionHolder, $newLinkLi) {
     var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
     
     $newLinkLi.before($newFormLi);
+
+    var type = $collectionHolder.attr('id');
+    var type = type.split('-');
+
+    var targetId = 'trick_'+type[0]+'_'+index;
+
     // also add a remove button, just for this example
-    $('#trick_media_'+index+' div.form-group label').first().append('<a href="#" class="remove-tag ml-2"><i class="fa fa-trash"></i></a>');
+    $('#' + targetId + ' div.form-group label').first().append('<a href="#" class="remove-tag ml-2"><i class="fa fa-trash"></i></a>');
     
     
     // handle the removal, just for this example

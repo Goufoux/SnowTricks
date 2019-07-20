@@ -21,7 +21,7 @@ security:
                 authenticators:
                     - App\Security\LoginAuthenticator
             logout:
-                path: app_logout
+                path: app_security_logout
             remember_me:
                 secret: '%kernel.secret'
                 lifetime: 604800
