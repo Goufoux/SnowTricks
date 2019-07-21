@@ -21,9 +21,12 @@
         </label>
     </div>
     <div class="form-group text-right">
-        <button class="btn btn-lg btn-primary" type="submit">
+        <button class="btn btn-sm btn-primary" type="submit">
             Connexion
         </button>
+        <a href="{{ url('app_security_forgotpassword') }}" class="btn btn-sm btn-info">
+            Mot de passe oublié ?
+        </a>
     </div>
 </form>
 {% endblock %}
