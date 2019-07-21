@@ -380,6 +380,8 @@ class User implements UserInterface
         switch ($type) {
             case self::TOKEN_FOR_PASSWORD:
                 $this->setPasswordToken($token);
+                $today = new \DateTime();
+                $this->setPasswordRenewal($today->add(new \DateInterval("P1D")));
                     break;
             case self::TOKEN_FOR_REGISTRATION: 
                 $this->setRegisterToken($token);
