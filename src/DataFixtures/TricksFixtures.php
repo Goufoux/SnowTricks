@@ -34,7 +34,7 @@ class TricksFixtures extends Fixture
             $trick->setAuthor($this->getReference('User_'.rand(1, 18)));
             $trick->setTrickGroup($this->getReference('TrickGroup_'.rand(1, 5)));
             $trick->setName($this->faker->colorName);
-            $trick->setDescription($this->faker->sentence());
+            $trick->setDescription($this->faker->sentence(150));
             $manager->persist($trick);
         }
 

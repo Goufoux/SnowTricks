@@ -8,10 +8,13 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Trick;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Entity\Media;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use App\Service\FileService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\VideoLink;
+use App\Form\CommentType;
+use App\Entity\Comment;
 
 class TrickController extends ObjectManagerController
 {
@@ -29,7 +32,56 @@ class TrickController extends ObjectManagerController
     }
 
     /**
-     * @Route("/trick/update/{trick}", name="app_trick_update")
+     * @Route("/trick/view/{slug}")
+     * @ParamConverter("trick", class="App:Trick")
+     * @Template()
+     *
+     * @param Trick $trick
+     */
+    public function view(Trick $trick = null, Request $request)
+    {
+        $comments = $this->em->getRepository(Comment::class)->findBy(['trick' => $trick], ['createdAt' => 'DESC'], 5);
+        $form = $this->createForm(CommentType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $comment->setCreatedAt(new \DateTime());
+            $comment->setTrick($trick);
+            $comment->setAuthor($this->getUser());
+
+            $this->em->persist($comment);
+            $this->em->flush();
+
+            $this->addFlash('success', 'Votre commentaire a été ajouté !');
+
+            return new RedirectResponse($this->generateUrl('app_trick_view', ['slug' => $trick->getSlug()]));
+        }
+
+        return [
+            'trick' => $trick,
+            'comments' => $comments,
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/trick/{id}/comments/{limit}/{offset}")
+     * @Template()
+     */
+    public function getComments(Trick $trick, $limit, $offset)
+    {
+        $comments = $this->em->getRepository(Comment::class)->findBy(['trick' => $trick], ['createdAt' => 'DESC'], $limit, $offset);
+        
+        return [
+            'comments' => $comments
+        ];
+    }
+
+    /**
+     * @Route("/trick/update/{slug}", name="app_trick_update")
+     * @ParamConverter("trick", class="App:Trick")
      * @Route("/trick/new", name="app_trick_new")
      * @Template()
      */
@@ -63,7 +115,7 @@ class TrickController extends ObjectManagerController
             
             $this->em->flush();
 
-            return new RedirectResponse($this->generateUrl('app_trick_update', ['trick' => $trick->getId()]));
+            return new RedirectResponse($this->generateUrl('app_trick_update', ['slug' => $trick->getSlug()]));
         }
 
         return [
@@ -100,10 +152,14 @@ class TrickController extends ObjectManagerController
      * @param Trick $trick
      * @return RedirectResponse
      */
-    public function remove(Trick $trick)
+    public function remove(Trick $trick, Request $request)
     {
         $this->em->remove($trick);
         $this->em->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(true);
+        }
 
         $this->addFlash('danger', 'Trick supprimé !');
         

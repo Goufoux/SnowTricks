@@ -1,4 +1,46 @@
 {% extends "frontend/base.html.twig" %}
 {% block body %}
-<h1>Hello World !</h1>
+<section class="col-12" id="homepage-section">
+    <h1 class="h3 text-white m-2">SnowTricks</h1>
+    <blockquote class="blockquote text-white">
+        <p>
+            Texte d'accroche
+        </p>
+    </blockquote>
+    <div id="homepage-arrow" class="arrow-link">
+        <i class="fa fa-arrow-down"></i>
+    </div>
+</section>
+<section class="col-12 mb-3" id="trick-section">
+    <div class="row justify-content-center">
+        {% for trick in tricks %}
+        <div class="col-lg-2 col-md-4 col-12 bg-primary text-white m-2" id="trick_{{ trick.id }}">
+            <div class="wrapper-img">
+                {% for media in trick.media %}
+                    {% if loop.first %}
+                        <img src="{{ asset('img/trick/' ~ media.mediaSrc) }}" class="img-fluid" alt="Trick image">
+                    {% endif %}
+                {% else %}
+                    <img src="{{ asset('img/default_trick.jpg') }}" alt="Trick image" class="img-fluid">
+                {% endfor %}
+            </div>
+            <h2 class="h4">
+                <a href="{{ url('app_trick_view', {slug: trick.slug}) }}">
+                    {{ trick.name }}
+                </a>
+                {% if is_granted('ROLE_USER') %}
+                    <div class="float-right">
+                        <a href="{{ url('app_trick_update', {slug: trick.slug }) }}" class="btn btn-info btn-sm">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <button data-key="{{ trick.id }}" data-target="trick_{{ trick.id }}" class="btn btn-danger btn-sm delete-trick">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                {% endif %}
+            </h2>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

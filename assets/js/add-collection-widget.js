@@ -1,24 +1,12 @@
 var $addTagLink = $('<div class="text-right"><a href="#" class="add_tag_link btn btn-info">Ajouter un média</a></div>');
 
 $(document).ready(function() {
-    console.log('ready');
-    
-    
-    
     // Get the ul that holds the collection of tags
     var $collectionHolder = $('ul.collections');
 
-    
     // add the "add a tag" anchor and li to the tags ul
     var $newLinkLi = $('<li class="list-group-item"></li>').append($addTagLink);
     $collectionHolder.append($newLinkLi);
-
-
-    
-    // $('ul.collections').each(function () {
-    //     console.log($(this));
-    //     $(this).append($newLinkLi);
-    // })
     
     // count the current form inputs we have (e.g. 2), use that as the new
     // index when inserting a new item (e.g. 2)
@@ -30,8 +18,6 @@ $(document).ready(function() {
 
         var $newLinkLi = $(this).parent().parent().parent().append($newLinkLi);
         $collectionHolder = $(this).parent().parent().parent();
-        // console.log($test) 
-        // return
         
         // add a new tag form (see code block below)
         addTagForm($collectionHolder, $newLinkLi, $(this));
@@ -41,8 +27,6 @@ $(document).ready(function() {
 });
 
 function addTagForm($collectionHolder, $newLinkLi, $elm) {
-    // console.log($elm); 
-    // return;
     // Get the data-prototype explained earlier
     var prototype = $collectionHolder.data('prototype');
     
