@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use App\Entity\Trick;
 
 class IndexController extends ObjectManagerController
 {
@@ -15,7 +16,11 @@ class IndexController extends ObjectManagerController
      */
     public function index()
     {
-        return [];
+        $tricks = $this->em->getRepository(Trick::class)->findAll();
+
+        return [
+            'tricks' => $tricks
+        ];
     }
 
     /**

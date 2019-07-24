@@ -1,17 +1,114 @@
-.invalid-feedback .form-error-message {
-    font-size: 15px;
+/**
+ * Html, Body
+ */
+html {
+    /* border: solid purple 1px; */
+    min-height: 100%;
 }
-.invalid-feedback .form-error-icon {
-    padding: 5px;
-    font-size: 12px;
+body {
+    /* border: solid yellowgreen 2px; */
+    min-height: 100%;
 }
-.invalid-feedback .form-error-icon::before {
 
-    font-family: "FontAwesome";
-    content: "\f071";
-    margin-right: 5px;
-    animation-duration: 3s;
-    animation-name: show;
+.preloader {
+    height: 50%;
+    text-align: center;
+    padding: 5em;
+    margin: auto;
+    width: 100%;
+    position: absolute;
+}
+.preloader i {
+    font-size: 5em;
+}
+.preloader::after {
+    content: 'Chargement en cours';
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
+.rotate {
+    transition: all 2s;
+    animation: rotate 2s linear .1s infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    } to {
+        transform: rotate(360deg);
+    }
+}
+
+#main-footer {
+    opacity: 0;
+}
+.footer-fix {
+    position: fixed;
+    bottom: 0;
+}
+
+/**
+ * Homepage
+ */
+#homepage-section {
+    /* border: solid green 1px; */
+    background-image: url('../../public/img/homepage.jpg');
+    background-size: cover;
+    /* opacity: 0; */
+    /* height: 100%;
+    min-height: 100%; */
+}
+
+#homepage-arrow {
+    background: white;
+    padding: 10px;
+    border-radius: 40%;
+    position: absolute;
+    bottom: 5%;
+    right: 3%;
+    transition: all 1s;
+    opacity: 0.3;
+}
+
+#homepage-arrow:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/**
+ * Trick View 
+ */
+ #trick-container {
+     background: wheat;
+     border-radius: 4px 4px 0px 0px;
+ }
+.trick-header {
+    background: no-repeat center;
+    min-height: 550px;
+    border-radius: 4px 4px 0px 0px;
+    background-size: 100% auto cover;
+}
+.trick-header h1 {
+    background-color: rgba(253, 253, 253, 0.4);
+    border-radius: 4px 4px 0px 0px;
+}
+.trick-view-iframe {
+    padding: 0%;
+}
+.trick-view-iframe iframe {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.r0 {
+    transform: rotate(0deg);
+}
+.r180 {
+    transform: rotate(180deg);
 }
 
 @keyframes show  {
@@ -30,10 +127,28 @@
     border-radius: 40%;
     cursor: pointer;
 }
-
+.img-avatar {
+    height: 50px;
+    width: 50px;
+}
 /**
  * Formulaires
  */
+ .invalid-feedback .form-error-message {
+    font-size: 15px;
+}
+.invalid-feedback .form-error-icon {
+    padding: 5px;
+    font-size: 12px;
+}
+.invalid-feedback .form-error-icon::before {
+
+    font-family: "FontAwesome";
+    content: "\f071";
+    margin-right: 5px;
+    animation-duration: 3s;
+    animation-name: show;
+}
 .custom-file-label {
     color: black;
 }
@@ -51,8 +166,8 @@
     border: solid yellowgreen;
     position: relative;
     display: inline-block;
-    height: 260px;
-    width: 380px;
+    max-height: 260px;
+    max-width: 380px;
     overflow: hidden;
     /* width: 200% !important;
     height: 50%; */
@@ -62,8 +177,16 @@
     background-color: aqua;
 }
 iframe {
-    border: solid red;
-    max-height: 240px !important;
-    max-width: 360px !important;
-    position: absolute;
+    max-height: 100% !important;
+    min-height: 219px;
+    max-width: 100% !important;
+    /* position: absolute; */
+}
+
+/**
+ * User avatar picture
+ */
+.avatar-small {
+    max-height: 34px;
+    max-width: 34px;
 }

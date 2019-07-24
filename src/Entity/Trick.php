@@ -51,7 +51,7 @@ class Trick
      * @Assert\Length(
      *  min=15, 
      *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
-     *  max=500,
+     *  max=1500,
      *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $description;
@@ -68,7 +68,7 @@ class Trick
     private $media;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick", cascade={"remove"})
      */
     private $comments;
 
