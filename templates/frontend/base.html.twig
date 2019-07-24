@@ -7,15 +7,15 @@
             {{ encore_entry_link_tags('global') }}
         {% endblock %}
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <a class="navbar-brand" href="#">SnowTricks</a>
+    <body id="body">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="mainNavbar">
+            <a class="navbar-brand" href="{{ url('app_index_index') }}">SnowTricks</a>
             <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
                 aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fa fa-list"></i>
+                <i class="fa fa-bars"></i>
             </button>
-            <div class="collapse navbar-collapse" id="collapsibleNavId">
-                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <div class="collapse navbar-collapse justify-content-lg-end" id="collapsibleNavId">
+                <ul class="navbar-nav mt-2 mt-lg-0">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
@@ -36,12 +36,20 @@
                 </ul>
             </div>
         </nav>
-        {% include "include/flash.html.twig" %}
-        <div class="container">
-            <div class="row">
-                {% block body %}{% endblock %}
+        <div class="preloader">
+            <i class="fa fa-spinner rotate"></i>
+        </div>
+        <div class="loaded hide">
+            {% include "include/flash.html.twig" %}
+            <div class="container-fluid">
+                <div class="row">
+                    {% block body %}{% endblock %}
+                </div>
             </div>
         </div>
+        <footer id="main-footer">
+            Le footer
+        </footer>
         {% block javascripts %}
             {{ encore_entry_script_tags('global') }}
         {% endblock %}

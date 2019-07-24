@@ -1,0 +1,112 @@
+{% extends "frontend/base.html.twig" %}
+{% block body %}
+{% set background = 'img/default_trick.jpg' %}
+{% for media in trick.media %}
+    {% if loop.first %}
+        {% set background = 'img/trick/'~media.mediaSrc %}
+    {% endif %}
+{% endfor %}
+<section class="col-12" id="homepage-section">
+    <div class="row">
+        <section id="trick-container" class="col-lg-8 col-sm-12 mx-auto mt-5 p-0">
+            <section class="trick-header" style="background-image: url('{{ asset(background) }}');">
+                <h1 class="h2 p-1">
+                    {{ trick.name }}
+                    {% if is_granted('ROLE_USER') %}
+                        <div class="float-right p-0">
+                            <a href="{{ url('app_trick_update', {slug: trick.slug}) }}" data-toggle="tooltip" title="Modifier le trick ?" class="btn btn-info">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a href="{{ url('app_trick_remove', {trick: trick.id}) }}" class="btn btn-danger delete-trick-redirect" data-toggle="tooltip" title="Supprimer le trick ?">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </h1>
+            </section>
+            <section id="trick-medias" class="bg-secondary">
+                <div class="row justify-content-center">
+                    {% for media in trick.media %}
+                        {% if loop.first == false %}
+                        <div class="col-lg-3 col-sm-5 mx-2 my-2">
+                            <img class="img-fluid" src="{{ asset('img/trick/'~ media.mediaSrc) }}" alt="Trick image">
+                        </div>    
+                        {% endif %}
+                    {% endfor %}
+                    {% for video in trick.videoLinks %}
+                        <div class="col-lg-3 col-sm-5 mx-2 my-2 trick-view-iframe">
+                            {{ video.source|raw }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+            <section id="trick-content">
+                <p class="p-2">
+                    {{ trick.description }}
+                </p>
+            </section>
+            <section id="trick-info" class="p-2 text-center">
+                    <a href="{{ url('app_user_view', {user: trick.author.id}) }}" data-toggle="tooltip" title="Dernier auteur, voir le profil ?" class="btn btn-primary">
+                        {% set avatar = '/img/default_avatar.png' %}
+                        {% if trick.author.avatar is not empty %}
+                            {% set avatar = '/img/avatar/'~trick.author.avatar %}   
+                        {% endif %}
+                        <img src="{{ asset(avatar) }}" alt="user avatar" class="avatar-small">
+                        {{ trick.author.username }}
+                    </a>
+                    <span class="btn btn-primary" data-toggle="tooltip" title="Date de création">
+                        <i class="fa fa-calendar mr-2"></i>
+                        {{ trick.createdAt|date("d/m/Y") }}
+                    </span>
+                    <span class="btn btn-info" data-toggle="tooltip" title="Groupe du trick">
+                        {{ trick.trickGroup.label }}
+                    </span>
+                    {% if trick.updatedAt is not empty %}
+                        <span class="btn btn-info" data-toggle="tooltip" title="Dernière mise à jour">
+                            <i class="fa fa-calendar-alt mr-2"></i>
+                            {{ trick.updatedAt|date("d/m/Y") }}
+                        </span>
+                    {% endif %}
+            </section>
+            <section id="trick-comments-form" class="col-12 bg-dark">
+                {% if is_granted('ROLE_USER') %}
+                <div class="bg-secondary">
+                    <h4 class="h5">Laisser un commentaire :</h4>
+                    {{ form_start(form) }}
+                    {{ form_row(form.content) }}
+                    <div class="form-group text-right">
+                        <input type="submit" value="Ajouter" class="btn btn-success">
+                    </div>
+                    {{ form_end(form) }}
+                    {% else %}
+                    <h4 class="h5">
+                        Vous devez être connecté pour laisser un commentaire !
+                    </h4>
+                    <a href="{{ url('app_security_register') }}" class="btn btn-info">Inscription</a>
+                    <a href="{{ url('app_security_login') }}" class="btn btn-info">Connexion</a>
+                    {% endif %}
+                </div>
+            </section>
+            <section id="trick-comments" data-key="{{ trick.id }}" class="bg-primary col-12">
+                <div class="row" data-length="{{ comments|length }}">
+                    {% for comment in comments %}
+                        <div class="col-12 comment-elm text-center my-2 bg-info">
+                            {% set avatarSrc = 'img/default_avatar.png' %}
+                            {% if comment.author.avatar is not empty %}
+                                {% set avatarSrc = 'img/avatar/' ~ comment.author.avatar %}
+                            {% endif %}
+                            <img src="{{ asset(avatarSrc) }}" alt="user avatar" class="img-fluid img-avatar d-inline-block">
+                            <p class="d-inline-block">
+                                {{ comment.content|escape|raw }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                    <button id="loadMore" class="btn btn-info">
+                        Load more
+                    </button>
+                </div>
+            </section>
+        </section>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% for comment in comments %}
+    <div class="col-12 comment-elm text-center my-2 bg-info">
+        {% set avatarSrc = 'img/default_avatar.png' %}
+        {% if comment.author.avatar is not empty %}
+            {% set avatarSrc = 'img/avatar/' ~ comment.author.avatar %}
+        {% endif %}
+        <img src="{{ asset(avatarSrc) }}" alt="user avatar" class="img-fluid img-avatar d-inline-block">
+        <p class="d-inline-block">
+            {{ comment.content|escape|raw }}
+        </p>
+    </div>
+{% endfor %}
