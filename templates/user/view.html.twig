@@ -1,20 +1,15 @@
 {% extends "frontend/base.html.twig" %}
 
 {% block body %}
-<h1>{{ user.username }}</h1>
-<section class="col-12">
-    <h2>Liste des tricks créés</h2>
+<h1 class="col-12 text-center my-3 h3">{{ user.username }}</h1>
+<section class="col-12 bg-primary">
+    <h2 class="text-white h4">Liste des tricks créés</h2>
     <div class="row justify-content-center">
         {% for trick in user.tricks %}
-            <div class="card bg-primary text-light col-lg-5 col-sm-12 m-2">
+            <div class="card bg-secondary text-light col-lg-3 col-md-5 col-sm-6 m-2">
                 <h5 class="card-header">
                     {{ trick.name }}
                 </h5>
-                <div class="card-body">
-                    <p>
-                        {{ trick.description }}
-                    </p>
-                </div>
                 <div class="card-footer text-center">
                     <div class="row">
                         <div class="col-12 my-2">
@@ -27,7 +22,7 @@
                             </span>
                         </div>
                         <div class="col-12">
-                            <a href="" class="btn btn-info">
+                            <a href="{{ url('app_trick_view', {slug: trick.slug}) }}" class="btn btn-info">
                                 <i class="fa fa-eye"></i>
                             </a>
                         </div>
