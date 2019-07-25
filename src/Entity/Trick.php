@@ -51,7 +51,7 @@ class Trick
      * @Assert\Length(
      *  min=15, 
      *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
-     *  max=1500,
+     *  max=5000,
      *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $description;

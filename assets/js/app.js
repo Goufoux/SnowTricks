@@ -1,61 +1,140 @@
 $(document).ready(function() {
 
-    // Loader
-    $('.loaded').fadeIn(1500, function() {
-        $('.preloader').remove();
-        replaceFooter();
-    });
+    const MaxTrickLoaded = 15;
+    const MaxCommentLoaded = 5;
+
+    let removeLoader = true;
+
+    let $homepageSection = $('#homepage-section');
+    let $trickSection = $('#trick-section');
+    let $trickContainer = $('#trick-container');
+
+    if ($trickSection.length > 0 && $('#trick-medias .trick-media').length > 0) {
+        if (detectmob()) {
+            $('#trick-medias .row').first().append('<div><button id="loadMedia">Load Media!</button></div>');
+            $('#trick-medias .row .trick-media').hide();
+        
+            $('#loadMedia').on('click', function (e) {
+                e.preventDefault();
+                $('#trick-medias .row .trick-media').slideDown('slow', function () {
+                    $('#loadMedia').parent().remove();
+                });
+            })
+        }
+    }
+    
+    // set homepage-section full
+    if ($homepageSection.length > 0) {
+        removeLoader = false;
+        let client_Height = $(window).height();
+        let navbarHeight = $('#mainNavbar').height();
+        let $homepageSection_newHeight = client_Height - (navbarHeight+20) - 10;
+        $homepageSection.animate({
+            height: $homepageSection_newHeight+'px'
+        }, 1500, function () {
+            if ($('#trick-section').hasClass('hide')) {
+                $('#trick-section').fadeIn();
+                replaceFooter();
+            }
+            if ($('#trick-container').hasClass('hide')) {
+                $('#trick-container').fadeIn();
+                replaceFooter();
+            }
+        });
+
+        /* Remove the loader, after set height */
+        $('.loaded').fadeIn(1500, function() {
+            $('.preloader').remove();
+            replaceFooter();
+        });
+
+        $homepageArrow = $('#homepage-arrow');
+
+        if ($homepageArrow.length > 0) {
+            $(window).on('scroll', function () {
+                if (isScrolledIntoView($trickContainer)) {
+                    $('#homepage-arrow').addClass('r180');
+                } else {
+                    $('#homepage-arrow').removeClass('r180');
+                }
+            });
+    
+            // Gestion en fonction du scroll
+            $('#homepage-arrow').on('click', function() {
+                let isVisible = isScrolledIntoView($trickContainer);
+                if (isVisible) {
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $('#body').offset().top
+                    }, 1500);
+                    $('#homepage-arrow').removeClass('r180');
+                } else {
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $trickContainer.offset().top
+                    }, 1500);
+                    $('#homepage-arrow').addClass('r180');
+                }
+            });
+        }
+    }
+
+    /* Homepage trick container */
+    if ($trickContainer.length > 0) {
+        let trickContainerLength = $trickContainer.data('length');
+
+        // Load more tricks ?
+        if (trickContainerLength >= MaxTrickLoaded) {
+            $trickContainer.children().append('<div class="col-12 text-center"><button id="loadMoreTricks" data-toggle="tooltip" title="Charger plus de trick ?" class="btn btn-info">Plus de tricks !</button></div>');
+        }
+
+        $trickContainer.on('click', '#loadMoreTricks', function () {
+            $('.tooltip').remove();
+            trickContainerLength = $trickContainer.data('length')
+            $.get({
+                url: "/trick/load/" + MaxTrickLoaded + "/" +trickContainerLength,
+                success: function (data) {
+                    if (data == false) {
+                        $('#loadMoreTricks').slideUp('slow', function () {
+                            $(this).remove();
+                        });
+                        return;
+                    }
+                    $('#loadMoreTricks').parent().before(data);
+                    const newLength = $('.trick-bloc').length;
+
+                    if (newLength > MaxTrickLoaded && trickContainerLength == MaxTrickLoaded) {
+                        $('#loadMoreTricks').parent().append('<div id="trick-arrow" class="bg-dark"><i class="fa fa-arrow-up fa-3x text-white"></i></div>')
+                        $('#trick-arrow').on('click', function () {
+                            $([document.documentElement, document.body]).animate({
+                                scrollTop: $trickContainer.offset().top
+                            }, 1500);
+                        })
+                    }
+
+                    $trickContainer.data('length', newLength);
+                },
+                error: function (e) {
+                    console.log(e.responseText)
+                }
+            })
+        })
+    }
+
+    if (removeLoader) {
+        // Loader
+        $('.loaded').fadeIn(1000, function() {
+            $('.preloader').remove();
+            replaceFooter();
+        });
+    }
 
     // Enable tooltip
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 
-    // set homepage-section full 
-    let $homepageSection = $('#homepage-section');
 
-    if ($homepageSection.length > 0) {
-        let $homepageSection_Height = $homepageSection.height();
-        let client_Height = $(window).height();
-        let navbarHeight = $('#mainNavbar').height();
-        let $homepageSection_newHeight = client_Height - (navbarHeight+20) - 10;
-        $homepageSection.css('height', $homepageSection_newHeight+'px');
-
-        $homepageArrow = $('#homepage-arrow');
-
-        if ($homepageArrow.length == 0) {
-            return;
-        }
-
-        $(window).on('scroll', function () {
-            if (isScrolledIntoView($('#trick-section'))) {
-                $('#homepage-arrow').addClass('r180');
-            } else {
-                $('#homepage-arrow').removeClass('r180');
-            }
-        })
-
-        if (isScrolledIntoView($('#trick-section'))) {
-            $('#homepage-arrow').addClass('r180');
-        }
-
-        // Gestion en fonction du scroll
-        $('#homepage-arrow').on('click', function() {
-            let isVisible = isScrolledIntoView($('#trick-section'));
-            // this.console.log('trick section est visible : ' + isVisible)
-            if (isVisible) {
-                // $('#homepage-arrow').attr('href', '#body');
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $('#body').offset().top
-                }, 1500);
-                $('#homepage-arrow').removeClass('r180');
-            } else {
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $('#trick-section').offset().top
-                }, 1500);
-                $('#homepage-arrow').addClass('r180');
-            }
-        })
+    if ($('#trick-comments .row').data('length') >= MaxCommentLoaded) {
+        $('#trick-comments .row').append('<div class="text-center col-12"><button id="loadMore" class="btn btn-info">Load more</button></div>');
     }
 
     // load more comment 
@@ -63,14 +142,14 @@ $(document).ready(function() {
         let nbComments = $('#trick-comments .row .comment-elm').length;
         let key = $('#trick-comments').data('key');
         $.get({
-            url: '/trick/'+key+'/comments/'+5+'/'+nbComments,
+            url: '/trick/'+key+'/comments/'+MaxCommentLoaded+'/'+nbComments,
             success: function (data) {
-                if (data.length == 0) {
+                if (data == false) {
                     $('#loadMore').slideUp('slow', function() {
-                        $('#loadMore').remove();
+                        $('#loadMore').parent().remove();
                     });
                 }
-                $('#trick-comments #loadMore').before(data);
+                $('#trick-comments #loadMore').parent().before(data);
                 nbComments = $('#trick-comments .row .comment-elm').length;
                 $('#trick-comments .row').attr('data-length', nbComments);
             },
@@ -106,16 +185,20 @@ $(document).ready(function() {
 
     // remove trick 
     $('.delete-trick').on('click', function(e) {
-        
+        e.preventDefault();
         $elm = $(this);
 
         const onConfirm = function() {
             $.get({
                 url: '/trick/remove/'+$elm.data('key'),
                 success: function (data) {
-                    $('#'+$elm.data('target')).slideUp('slow', function () {
-                        $('#'+$elm.data('target')).remove();
-                    });
+                    if ($elm.data('toindex') == true) {
+                        window.location.href = '/';
+                    } else {
+                        $('#'+$elm.data('target')).slideUp('slow', function () {
+                            $('#'+$elm.data('target')).remove();
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log('Erreur');
@@ -144,7 +227,9 @@ $(document).ready(function() {
         $.get({
             url: "/"+elm+"/"+type+"/remove/"+key,
             success: function (data) {
-                $this.fadeOut();
+                $this.parent().hide('slow', function () {
+                    $this.parent().remove();
+                });
             },
             error: function(e) {
                 console.log("error", e);
@@ -159,7 +244,7 @@ $(document).ready(function() {
         $.get({
             url: "/trick/video/remove/"+key,
             success: function (data) {
-                $('#iframe-'+key).fadeOut('slow', function () {
+                $('#iframe-'+key).hide('slow', function () {
                     $('#iframe-'+key).remove();
                     if ($('.video-bloc .bloc-iframe').length <= 0) {
                         $('.video-bloc').append($('<div class="alert alert-info"><h5 class="alert-heading">Aucune vidéo</h5></div>'));
@@ -225,3 +310,19 @@ function replaceFooter() {
         }, 750);
     });
 }
+
+function detectmob() { 
+    if( navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)
+    || navigator.userAgent.match(/Windows Phone/i)
+    ){
+       return true;
+     }
+    else {
+       return false;
+     }
+   }

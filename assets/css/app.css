@@ -2,11 +2,9 @@
  * Html, Body
  */
 html {
-    /* border: solid purple 1px; */
     min-height: 100%;
 }
 body {
-    /* border: solid yellowgreen 2px; */
     min-height: 100%;
 }
 
@@ -17,6 +15,7 @@ body {
     margin: auto;
     width: 100%;
     position: absolute;
+    z-index: 20000;
 }
 .preloader i {
     font-size: 5em;
@@ -55,18 +54,15 @@ body {
  * Homepage
  */
 #homepage-section {
-    /* border: solid green 1px; */
     background-image: url('../../public/img/homepage.jpg');
     background-size: cover;
-    /* opacity: 0; */
-    /* height: 100%;
-    min-height: 100%; */
+    height: 0px;
 }
 
 #homepage-arrow {
     background: white;
     padding: 10px;
-    border-radius: 40%;
+    border-radius: 50%;
     position: absolute;
     bottom: 5%;
     right: 3%;
@@ -79,11 +75,39 @@ body {
     cursor: pointer;
 }
 
+#trick-arrow {
+    position: absolute;
+    right: 3%;
+    bottom: 5%;
+    border-radius: 50%;
+    padding: 3px 6px;
+    transition: all .5s;
+}
+#trick-arrow:hover {
+    cursor: pointer;
+    transform: scale(1.2, 1.2);
+}
+.trick-bloc .wrapper-img {
+    border-radius: 4px 4px 0px 0px;
+}
+.trick-bloc .wrapper-img img {
+    border-radius: 4px 4px 0px 0px;
+}
+
+/**
+ * Alert
+ */
+.alert-flash {
+    position: absolute !important;
+    width: 100%;
+    border-radius: 0px 0px 4px 4px;
+    z-index: 10000;
+}
+
 /**
  * Trick View 
  */
- #trick-container {
-     background: wheat;
+ #trick-section {
      border-radius: 4px 4px 0px 0px;
  }
 .trick-header {
@@ -93,8 +117,11 @@ body {
     background-size: 100% auto cover;
 }
 .trick-header h1 {
-    background-color: rgba(253, 253, 253, 0.4);
     border-radius: 4px 4px 0px 0px;
+    position: absolute;
+    top: calc(550px / 4);
+    width: 100%;
+    text-align: center;
 }
 .trick-view-iframe {
     padding: 0%;
@@ -124,7 +151,7 @@ body {
     transition: all .3s;
 }
 .delete-image:hover {
-    border-radius: 40%;
+    border-radius: 50%;
     cursor: pointer;
 }
 .img-avatar {
@@ -149,6 +176,9 @@ body {
     animation-duration: 3s;
     animation-name: show;
 }
+textarea.form-control {
+    min-height: 150px;
+}
 .custom-file-label {
     color: black;
 }
@@ -156,37 +186,33 @@ body {
     border-radius: 0px;
     content: "Parcourir";
 }
-.preview-photo::after {
-    content: 'X';
-    font-size: 55px;
-    width: 100%;
-    border: solid red;
-}
 .bloc-iframe {
-    border: solid yellowgreen;
     position: relative;
     display: inline-block;
-    max-height: 260px;
-    max-width: 380px;
     overflow: hidden;
-    /* width: 200% !important;
-    height: 50%; */
     transition: all .5s;
 }
-.bloc-iframe:hover {
-    background-color: aqua;
+.bloc-iframe {
+    text-align: right;
+}
+.bloc-iframe .fa-trash {
+    transition: all .5s;
+}
+.bloc-iframe .fa-trash:hover {
+    cursor: pointer;
+    transform: scale(1.5, 1.5);
+    color: red;
 }
 iframe {
     max-height: 100% !important;
     min-height: 219px;
     max-width: 100% !important;
-    /* position: absolute; */
 }
 
 /**
  * User avatar picture
  */
 .avatar-small {
-    max-height: 34px;
-    max-width: 34px;
+    max-height: 18px;
+    max-width: 18px;
 }

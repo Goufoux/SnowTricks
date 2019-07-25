@@ -28,13 +28,13 @@ class TricksFixtures extends Fixture
         $this->createUsers($manager);
         $this->createGroups($manager);
 
-        for ($i = 1; $i < 10; $i++) {
+        for ($i = 1; $i < 100; $i++) {
             $trick = new Trick();
             $trick->setCreatedAt(new \DateTime());
-            $trick->setAuthor($this->getReference('User_'.rand(1, 18)));
-            $trick->setTrickGroup($this->getReference('TrickGroup_'.rand(1, 5)));
-            $trick->setName($this->faker->colorName);
-            $trick->setDescription($this->faker->sentence(150));
+            $trick->setAuthor($this->getReference('User_'.rand(1, 49)));
+            $trick->setTrickGroup($this->getReference('TrickGroup_'.rand(1, 29)));
+            $trick->setName($this->faker->sentence(2));
+            $trick->setDescription($this->faker->sentence(550));
             $manager->persist($trick);
         }
 
@@ -43,9 +43,9 @@ class TricksFixtures extends Fixture
 
     private function createGroups(ObjectManager $manager)
     {
-        for ($i = 1; $i < 10; $i++) {
+        for ($i = 1; $i < 30; $i++) {
             $trickGroup = new TrickGroup();
-            $trickGroup->setLabel($this->faker->colorName);
+            $trickGroup->setLabel($this->faker->sentence(3));
             $trickGroup->setCreatedAt(new \DateTime());
             $this->addReference('TrickGroup_'.$i, $trickGroup);
             $manager->persist($trickGroup);
@@ -65,7 +65,7 @@ class TricksFixtures extends Fixture
         $specialUser->setRoles(["ROLE_ADMIN"]);
         $manager->persist($specialUser);
 
-        for ($i = 1; $i < 20; $i++) {
+        for ($i = 1; $i < 50; $i++) {
             $user = new User();
             $user->setName($this->faker->name);
             $user->setFirstName($this->faker->firstName);

@@ -17,14 +17,24 @@ class TrickType extends AbstractType
         $builder
             ->add('name', Type\TextType::class, [
                 'required' => true,
-                'label' => 'Nom'
+                'label' => 'Nom',
+                'label_attr' => [
+                    'class' =>'text-white'
+                ]
             ])
-            ->add('description', Type\TextareaType::class)
+            ->add('description', Type\TextareaType::class, [
+                'label_attr' => [
+                    'class' =>'text-white'
+                ]
+            ])
             ->add('trickGroup', EntityType::class, [
                 'class' => TrickGroup::class,
                 'choice_label' => 'label',
                 'placeholder' => 'Groupe',
-                'required' => true
+                'required' => true,
+                'label_attr' => [
+                    'class' =>'text-white'
+                ]
             ])
             ->add('media', Type\CollectionType::class, [
                 'entry_type' => MediaType::class,
