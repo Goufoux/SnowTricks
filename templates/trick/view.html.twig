@@ -55,20 +55,20 @@
                 {% set avatar = '/img/avatar/'~trick.author.avatar %}   
                 {% set sep_avatar = '' %}
                 {% endif %}
-                    <a href="{{ url('app_user_view', {user: trick.author.id}) }}" data-toggle="tooltip" title="Dernier auteur, voir le profil ?" class="btn btn-info">
+                    <a href="{{ url('app_user_view', {user: trick.author.id}) }}" data-toggle="tooltip" title="Dernier auteur, voir le profil ?" class="btn btn-info my-2">
                         <img src="{{ asset(avatar) }}" alt="user avatar" class="avatar-small">
                         {{ trick.author.username }}
                     </a>
-                    <span class="btn btn-info" data-toggle="tooltip" title="Date de création">
+                    <span class="btn btn-info my-2" data-toggle="tooltip" title="Date de création">
                         <i class="fa fa-calendar mr-2"></i>
                         {{ trick.createdAt|date("d/m/Y") }}
                     </span>
-                    <span class="btn btn-info" data-toggle="tooltip" title="Groupe du trick">
+                    <span class="btn btn-info my-2" data-toggle="tooltip" title="Groupe du trick">
                         {{ trick.trickGroup.label }}
                     </span>
                     {% if trick.updatedAt is not empty %}
-                        <span class="btn btn-info" data-toggle="tooltip" title="Dernière mise à jour">
-                            <i class="fa fa-calendar-alt mr-2"></i>
+                        <span class="btn btn-info my-2" data-toggle="tooltip" title="Dernière mise à jour">
+                            <i class="fa fa-calendar mr-2"></i>
                             {{ trick.updatedAt|date("d/m/Y") }}
                         </span>
                     {% endif %}
@@ -78,17 +78,19 @@
                     <h4 class="h5 text-white">Laisser un commentaire :</h4>
                     {{ form_start(form) }}
                     {{ form_row(form.content) }}
-                    <div class="form-group text-right">
-                        <input type="submit" value="Ajouter" class="btn btn-success">
-                    </div>
+                        <div class="form-group text-right">
+                            <input type="submit" value="Ajouter" class="btn btn-success">
+                        </div>
                     {{ form_end(form) }}
-                    {% else %}
+                {% else %}
                     <h4 class="h5 text-white">
                         Vous devez être connecté pour laisser un commentaire !
                     </h4>
-                    <a href="{{ url('app_security_register') }}" class="btn btn-info">Inscription</a>
-                    <a href="{{ url('app_security_login') }}" class="btn btn-info">Connexion</a>
-                    {% endif %}
+                    <div class="text-center my-2">
+                        <a href="{{ url('app_security_register') }}" class="btn btn-info">Inscription</a>
+                        <a href="{{ url('app_security_login') }}" class="btn btn-info">Connexion</a>
+                    </div>
+                {% endif %}
             </section>
             <section id="trick-comments" data-key="{{ trick.id }}" class="col-12">
                 <div class="row" data-length="{{ comments|length }}">

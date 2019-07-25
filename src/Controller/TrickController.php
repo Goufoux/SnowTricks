@@ -119,22 +119,23 @@ class TrickController extends ObjectManagerController
         if ($trickForm->isSubmitted() && $trickForm->isValid()) {
             /** @var Trick $trick */
             $trick = $trickForm->getData();
-            $trick->setCreatedAt(new \DateTime());
             $trick->setAuthor($this->getUser());
-
+            
             /** @var array $files */
             $files = $request->files->get('trick')['media'] ?? [];
-
+            
             $videoLinks = $request->request->get('trick')['videoLinks'] ?? [];
             
             $this->addFilesToTrick($files, $fileService, $trick);
-
+            
             $this->addVideoLinksToTrick($videoLinks, $trick);
             
             if (null === $trick->getId()) {
+                $trick->setCreatedAt(new \DateTime());
                 $this->em->persist($trick);
                 $this->addFlash('success', 'Trick créé !');
             } else {
+                $trick->setUpdatedAt(new \DateTime());
                 $this->addFlash('info', 'Trick mis à jour !');
             }
             

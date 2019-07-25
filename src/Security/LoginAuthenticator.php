@@ -72,7 +72,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
         }
 
         if (!$this->isActive($user)) {
-            throw new CustomUserMessageAuthenticationException('Votre compte est désactivé.');
+            throw new CustomUserMessageAuthenticationException('Votre compte n\'est pas activé.');
         }
 
         return $user;

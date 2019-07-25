@@ -1,8 +1,7 @@
 {% extends "frontend/base.html.twig" %}
 {% block body %}
-<h1 class="h3 mb-3 col-12">Inscription</h1>
-
-<section class="col-12 bg-secondary rounded p-2">
+<h1 class="h3 my-3 col-12 text-center">Inscription</h1>
+<section class="col-lg-6 col-md-10 col-sm-12 mx-auto bg-primary text-white rounded p-2">
     {{ form_start(form) }}
     <div class="form-row">
         <div class="form-group col-lg-6 col-sm-12">
@@ -16,17 +15,6 @@
         </div>
         <div class="form-group col-lg-6 col-sm-12">
             {{ form_row(form.email) }}
-        </div>
-        <div class="input-group mb-3 col-12">
-            <div class="input-group-prepend">
-                <div class="input-group-text">
-                    <input type="checkbox" name="cgu" id="cgu" required>
-                </div>
-            </div>
-            <label for="cgu" class="form-control">
-                En vous inscrivant sur <em>SnowTricks</em>,
-                vous acceptez <a href="">nos conditions générales d'utlisations</a>
-            </label>
         </div>
         <div class="form-group col-12 text-right">
             <input type="submit" value="Inscription" class="btn btn-success">
