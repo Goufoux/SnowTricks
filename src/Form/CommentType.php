@@ -14,7 +14,10 @@ class CommentType extends AbstractType
     {
         $builder
             ->add('content', TextareaType::class, [
-                'label' => 'Votre message'
+                'label' => 'Votre message',
+                'label_attr' => [
+                    'class' => 'text-white'
+                ]
             ])
         ;
     }

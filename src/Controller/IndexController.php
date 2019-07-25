@@ -16,7 +16,7 @@ class IndexController extends ObjectManagerController
      */
     public function index()
     {
-        $tricks = $this->em->getRepository(Trick::class)->findAll();
+        $tricks = $this->em->getRepository(Trick::class)->findBy([], ['createdAt' => 'DESC'], 15, 0);
 
         return [
             'tricks' => $tricks

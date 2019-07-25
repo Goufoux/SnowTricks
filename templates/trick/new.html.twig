@@ -1,76 +1,92 @@
 {% extends "frontend/base.html.twig" %}
 {% block body %}
-<h1 class="col-12 mt-2 h3">
-    {% if trick is empty %}
-        <i class="fa fa-plus-circle mr-2"></i>
-        Nouveau Trick
-    {% else %}
-        <i class="fa fa-pencil mr-2"></i>
-        {{ trick.name }}
-    {% endif %}
-</h1>
-<div class="col-xl-6 col-md-12 mx-auto">
-    {{ form_start(form) }}
-    <div class="form-group">
-        {{ form_row(form.name) }}
-    </div>
-    <div class="form-group">
-        {{ form_row(form.trickGroup) }}
-    </div>
-    <div class="form-group">
-        {{ form_row(form.description) }}
-    </div>
-    <h2 class="h4">Ajouter des images</h2>
-    <ul class="collections list-group my-2" id="media-fields-list"
-        data-prototype="{{ form_widget(form.media.vars.prototype)|e('html_attr') }}"
-        data-widget-tags="{{ '<li></li>'|e }}"
-        data-widget-counter="{{ form.children|length }}">
-    </ul>
-    <h2 class="h4">Ajouter des vidéos</h2>
-    <ul class="collections list-group my-2" id="videoLinks-fiels-list"
-        data-prototype="{{ form_widget(form.videoLinks.vars.prototype)|e('html_attr') }}"
-        data-widget-tags="{{ '<li class="list-group-item"></li>'|e }}"
-        data-widget-counter="{{ form.children|length }}">
-
-    </ul>
-    <div class="form-group text-right">
-        {% if trick is not empty %}
-            <input type="submit" value="Mettre à jour" class="btn btn-info">            
-        {% else %}
-            <input type="submit" value="Ajouter" class="btn btn-success">
-        {% endif %}
-    </div>
-    {{ form_end(form) }}
-</div>
-{% if trick is not empty %}
-    <div class="col-xl-2">
-        <h3 class="h4">Image(s)</h3>
-        {% for image in trick.media %}
-            <img src="{{ asset('img/trick/'~image.mediaSrc) }}" alt="Image" class="img-fluid delete-image" 
-                data-key="{{ image.id }}"
-                data-elm="trick"
-                data-type="media"
-                >
-        {% else %}
-            <div class="alert alert-info">
-                <h5 class="alert-heading">Aucune image</h5>
+<section class="col-12" id="homepage-section">
+    <div class="row">
+        <section id="trick-section" class="col-lg-8 col-md-8 col-sm-10 mx-auto mt-5 bg-primary">
+            <h1 class="mt-2 h3 text-white">
+                {% if trick is empty %}
+                    <i class="fa fa-plus-circle mr-2"></i>
+                    Nouveau Trick
+                {% else %}
+                    <i class="fa fa-pencil mr-2"></i>
+                    {{ trick.name }}
+                {% endif %}
+            </h1>
+            <div class="col-lg-12 col-sm-12 mx-auto">
+                {{ form_start(form) }}
+                <div class="form-group col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                {% if trick is not empty %}
+                    <div id="trick-medias">
+                        <div class="row my-2 justify-content-center">
+                            {% for image in trick.media %}
+                            <div class="col-lg-3 col-md-6 col-sm-12 my-2 trick-media">
+                                    {% if loop.index0 == 0 %}
+                                        <span class="position-absolute badge badge-info p-2">Image à la une</span>
+                                    {% endif %}
+                                    <img src="{{ asset('img/trick/'~image.mediaSrc) }}" alt="Image" class="img-fluid delete-image" 
+                                    data-key="{{ image.id }}"
+                                    data-elm="trick"
+                                    data-type="media"
+                                    >
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row my-2 justify-content-center">
+                            {% for video in trick.videoLinks %}
+                            <div class="trick-media bloc-iframe col-lg-4 col-md-6 col-sm-12 my-2" id="iframe-{{ video.id }}">
+                                <i class="fa fa-trash delete-video text-white" data-key="{{ video.id }}"></i>
+                                {{ video.source|raw }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="form-group col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="form-group col-lg-5 col-sm-12">
+                    {{ form_row(form.trickGroup) }}
+                </div>
+                <div class="row col-12">
+                    <div class="col-lg-6 col-sm-12">
+                        <h2 class="h4 text-white">
+                            <i class="fa fa-plus"></i>
+                            Ajouter des images
+                        </h2>
+                        <ul class="collections list-group my-2" id="media-fields-list"
+                            data-prototype="{{ form_widget(form.media.vars.prototype)|e('html_attr') }}"
+                            data-widget-tags="{{ '<li></li>'|e }}"
+                            data-widget-counter="{{ form.children|length }}">
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                        <h2 class="h4 text-white">
+                            <i class="fa fa-plus"></i>
+                            Ajouter des vidéos
+                        </h2>
+                        <ul class="collections list-group my-2" id="videoLinks-fiels-list"
+                            data-prototype="{{ form_widget(form.videoLinks.vars.prototype)|e('html_attr') }}"
+                            data-widget-tags="{{ '<li class="list-group-item"></li>'|e }}"
+                            data-widget-counter="{{ form.children|length }}">
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group text-center mt-2">
+                    {% if trick is not empty %}
+                        <button class="btn btn-danger delete-trick" data-toindex="true" data-key="{{ trick.id }}">
+                            <i class="fa fa-trash"></i>
+                            Supprimer
+                        </button>
+                        <input type="submit" value="Mettre à jour" class="btn btn-info">            
+                    {% else %}
+                        <input type="submit" value="Ajouter" class="btn btn-success">
+                    {% endif %}
+                </div>
+                {{ form_end(form) }}
             </div>
-        {% endfor %}
-        <h3 class="h4">Vidéo(s)</h3>
-        <div class="video-bloc">
-            {% if trick.videoLinks is not empty %}
-                {% for video in trick.videoLinks %}
-                <div class="bloc-iframe" id="iframe-{{ video.id }}">
-                    <i class="fa fa-trash delete-video" data-key="{{ video.id }}"></i>
-                    {{ video.source|raw }}
-                </div>
-                {% endfor %}
-            {% else %}  
-                <div class="alert alert-info">
-                    <h5 class="alert-heading">Aucune vidéo</h5>
-                </div>
-            {% endif %}
-        </div>
+        </section>
     </div>
-{% endif %}
+</section>
 {% endblock %}

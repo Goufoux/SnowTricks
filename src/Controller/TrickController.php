@@ -74,8 +74,33 @@ class TrickController extends ObjectManagerController
     {
         $comments = $this->em->getRepository(Comment::class)->findBy(['trick' => $trick], ['createdAt' => 'DESC'], $limit, $offset);
         
+        if (empty($comments)) {
+            return new JsonResponse(false);
+        }
+
         return [
             'comments' => $comments
+        ];
+    }
+
+    /**
+     * @Route("/trick/load/{limit}/{offset}")
+     * @Template
+     *
+     * @param [int] $limit
+     * @param [int] $offset
+     * @return array
+     */
+    public function getTricks($limit, $offset)
+    {
+        $tricks = $this->em->getRepository(Trick::class)->findBy([], ['createdAt' => 'DESC'], $limit, $offset);
+
+        if (empty($tricks)) {
+            return new JsonResponse(false);
+        }
+
+        return [
+            'tricks' => $tricks
         ];
     }
 
@@ -160,7 +185,7 @@ class TrickController extends ObjectManagerController
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(true);
         }
-
+        
         $this->addFlash('danger', 'Trick supprimé !');
         
         return new RedirectResponse($this->generateUrl('app_trick_index'));
@@ -178,6 +203,20 @@ class TrickController extends ObjectManagerController
 
         $this->em->flush();
 
+
+        return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/trick/video/remove/{videoLink}")
+     *
+     * @param VideoLink $videoLink
+     * @return JsonResponse
+     */
+    public function removeVideo(VideoLink $videoLink)
+    {
+        $this->em->remove($videoLink);
+        $this->em->flush();
 
         return new JsonResponse(true);
     }
