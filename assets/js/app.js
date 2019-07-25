@@ -11,13 +11,14 @@ $(document).ready(function() {
 
     if ($trickSection.length > 0 && $('#trick-medias .trick-media').length > 0) {
         if (detectmob()) {
-            $('#trick-medias .row').first().append('<div><button id="loadMedia">Load Media!</button></div>');
+            $('#trick-medias .row').first().append('<div><button id="loadMedia" class="btn btn-info">Charger les images</button></div>');
             $('#trick-medias .row .trick-media').hide();
         
             $('#loadMedia').on('click', function (e) {
                 e.preventDefault();
                 $('#trick-medias .row .trick-media').slideDown('slow', function () {
                     $('#loadMedia').parent().remove();
+                    replaceFooter();
                 });
             })
         }
@@ -102,7 +103,7 @@ $(document).ready(function() {
                     const newLength = $('.trick-bloc').length;
 
                     if (newLength > MaxTrickLoaded && trickContainerLength == MaxTrickLoaded) {
-                        $('#loadMoreTricks').parent().append('<div id="trick-arrow" class="bg-dark"><i class="fa fa-arrow-up fa-3x text-white"></i></div>')
+                        $('#loadMoreTricks').parent().append('<div id="trick-arrow" class="bg-dark"><i class="fa fa-arrow-up fa-2x text-white"></i></div>')
                         $('#trick-arrow').on('click', function () {
                             $([document.documentElement, document.body]).animate({
                                 scrollTop: $trickContainer.offset().top
@@ -134,7 +135,7 @@ $(document).ready(function() {
 
 
     if ($('#trick-comments .row').data('length') >= MaxCommentLoaded) {
-        $('#trick-comments .row').append('<div class="text-center col-12"><button id="loadMore" class="btn btn-info">Load more</button></div>');
+        $('#trick-comments .row').append('<div class="text-center col-12 my-2"><button id="loadMore" class="btn btn-info">Afficher plus de commentaire</button></div>');
     }
 
     // load more comment 
@@ -152,6 +153,7 @@ $(document).ready(function() {
                 $('#trick-comments #loadMore').parent().before(data);
                 nbComments = $('#trick-comments .row .comment-elm').length;
                 $('#trick-comments .row').attr('data-length', nbComments);
+                replaceFooter();
             },
             error: function (e) {
                 console.log(e.responseText);
@@ -301,6 +303,21 @@ function replaceFooter() {
 
         var height = Math.max( body.scrollHeight, body.offsetHeight, 
                        html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+        const $trickContainer = $('#trick-section');
+
+        console.log($trickContainer);
+
+        if ($trickContainer.length) {
+            let trickContainerHeight = $trickContainer.height() + 150;
+            console.log('container de trick detected, footer position on y : ' + trickContainerHeight+'px')
+            if (trickContainerHeight >= wh) {
+                $('footer').css('top', trickContainerHeight+'px');
+                $('footer').css('position', 'absolute');
+            }
+
+
+        }
 
         if (wh == height) {
             $("footer").addClass('footer-fix');
