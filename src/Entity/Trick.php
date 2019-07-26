@@ -5,9 +5,15 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrickRepository")
+ * @UniqueEntity(
+ *  fields={"name"},
+ *  message="Un trick nommé {{ value }} existe déjà")
  */
 class Trick
 {
@@ -21,28 +27,34 @@ class Trick
     /**
      * @ORM\Column(type="datetime")
      */
-    private $created_at;
+    private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $updated_at;
+    private $updatedAt;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, unique=true)
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=3, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=50,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
+     * @Assert\Length(
+     *  min=15, 
+     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
+     *  max=500,
+     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $description;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Group", inversedBy="tricks")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $trick_group;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tricks")
@@ -51,7 +63,7 @@ class Trick
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick")
+     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="trick", cascade={"persist", "merge", "remove"})
      */
     private $media;
 
@@ -60,10 +72,28 @@ class Trick
      */
     private $comments;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\TrickGroup", inversedBy="tricks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $trickGroup;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoLink", mappedBy="trick", cascade={"persist", "merge", "remove"})
+     */
+    private $videoLinks;
+
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=255, unique=true)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->videoLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,24 +103,24 @@ class Trick
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -119,18 +149,6 @@ class Trick
         return $this;
     }
 
-    public function getTrickGroup(): ?Group
-    {
-        return $this->trick_group;
-    }
-
-    public function setTrickGroup(?Group $trick_group): self
-    {
-        $this->trick_group = $trick_group;
-
-        return $this;
-    }
-
     public function getAuthor(): ?User
     {
         return $this->author;
@@ -139,6 +157,18 @@ class Trick
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -199,6 +229,49 @@ class Trick
             // set the owning side to null (unless already changed)
             if ($comment->getTrick() === $this) {
                 $comment->setTrick(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTrickGroup(): ?TrickGroup
+    {
+        return $this->trickGroup;
+    }
+
+    public function setTrickGroup(?TrickGroup $trickGroup): self
+    {
+        $this->trickGroup = $trickGroup;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|VideoLink[]
+     */
+    public function getVideoLinks(): Collection
+    {
+        return $this->videoLinks;
+    }
+
+    public function addVideoLink(VideoLink $videoLink): self
+    {
+        if (!$this->videoLinks->contains($videoLink)) {
+            $this->videoLinks[] = $videoLink;
+            $videoLink->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideoLink(VideoLink $videoLink): self
+    {
+        if ($this->videoLinks->contains($videoLink)) {
+            $this->videoLinks->removeElement($videoLink);
+            // set the owning side to null (unless already changed)
+            if ($videoLink->getTrick() === $this) {
+                $videoLink->setTrick(null);
             }
         }
 

@@ -1,0 +1,52 @@
+{% extends "backend/base.html.twig" %}
+{% block body %}
+<h1 class="col-12 mt-2">Liste des tricks ({{ tricks|length }}) </h1>
+<section class="col-12">
+    <div class="row justify-content-center">
+        {% for trick in tricks %}
+            <div class="card bg-primary m-2">
+                <h2 class="card-header text-secondary">{{ trick.name }}</h2>
+                <div class="card-body">
+                    <p class="text-secondary">
+                        {{ trick.description }}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <span class="badge badge-secondary p-2 rounded">
+                                <i class="fa fa-user-circle mr-2"></i>
+                                {{ trick.author.username }}
+                            </span>
+                            <span class="badge badge-secondary p-2 rounded">
+                                <i class="fa fa-calendar mr-2"></i>
+                                {{ trick.createdAt|date("d/m/y") }}
+                            </span>
+                            {% if trick.updatedAt is not empty %}
+                                <span class="badge badge-secondary p-2 rounded">
+                                    <i class="fa fa-calendar-alt mr-2"></i>
+                                    {{ trick.updatedAt|date("d/m/y") }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 mt-2 text-center">
+                            <a href="{{ url('app_trick_update', {trick: trick.id }) }}" class="btn btn-info">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a href="{{ url('app_trick_remove', {trick: trick.id }) }}" class="btn btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Aucun trick en base.</h5>
+            </div>
+        {% endfor %}
+    
+    </div>
+</section>
+    
+{% endblock %}

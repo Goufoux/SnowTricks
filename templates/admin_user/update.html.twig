@@ -1,0 +1,34 @@
+{% extends "backend/base.html.twig" %}
+{% block body %}
+<h1 class="h3 my-2 col-12">
+    <i class="fa fa-user-circle-o mr-2"></i>
+    {{ user.username }}
+</h1>
+<section class="col-12">
+    <div class="form-row">
+        <h2 class="h4 col-12">
+            Données générales
+        </h2>
+        <div class="col-lg-6 col-sm-12">
+            <h3 class="h5">
+                Informations
+            </h3>
+            {{ form_start(user_form) }}
+            {{ form_end(user_form) }}
+            {% if user.avatar is not empty %}
+                <img src="{{ asset('/img/avatar/')~user.avatar }}" alt="test" class="img-fluid delete-image" 
+                    data-key="{{ user.id }}"
+                    data-elm="user"
+                    data-type="avatar">            
+            {% endif %}
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <h3 class="h5">
+                Connexion
+            </h3>
+            {{ form_start(password_form) }}
+            {{ form_end(password_form) }}
+        </div>
+    </div>
+</section>
+{% endblock %}

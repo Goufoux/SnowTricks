@@ -2,26 +2,28 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-class IndexController extends AbstractController
+class IndexController extends ObjectManagerController
 {
-    private $em;
-
-    public function __construct(ObjectManager $em)
-    {
-        $this->em = $em;
-    }
-
     /**
-     * @Route("/", name="app_index")
+     * @Route("/")
+     * @Template()
      *
      * @return void
      */
     public function index()
     {
-        return $this->render('index/index.html.twig');
-    }    
+        return [];
+    }
+
+    /**
+     * @Route("/welcome")
+     * @Template()
+     */
+    public function welcome()
+    {
+        return [];
+    }
 }

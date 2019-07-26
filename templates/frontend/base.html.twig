@@ -2,33 +2,35 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{{ title ?? 'SnowTricks' }}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('global') }}
         {% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <a class="navbar-brand" href="#">SnowTricks</a>
             <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
-                aria-expanded="false" aria-label="Toggle navigation"></button>
+                aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-list"></i>
+            </button>
             <div class="collapse navbar-collapse" id="collapsibleNavId">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
-                                <a href="{{ url('app_admin_index') }}" class="nav-link">Backend</a>
+                                <a href="{{ url('app_adminindex_index') }}" class="nav-link">Backend</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a href="{{ url('app_logout') }}" class="nav-link">Déconnexion</a>
+                            <a href="{{ url('app_security_logout') }}" class="nav-link">Déconnexion</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a href="{{ url('register') }}" class="nav-link">Inscription</a>
+                            <a href="{{ url('app_security_register') }}" class="nav-link">Inscription</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('app_login') }}" class="nav-link">Connexion</a>
+                            <a href="{{ url('app_security_login') }}" class="nav-link">Connexion</a>
                         </li>
                     {% endif %}
                 </ul>
