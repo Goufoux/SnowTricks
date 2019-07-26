@@ -44,34 +44,36 @@
                 </div>
             </section>
             <section id="trick-content p-2">
-                <p class="p-2 text-white">
+                <h2 class="h3 m-2 text-info">
+                    Groupe : {{ trick.trickGroup.label }}
+                </h2>
+                <p class="p-2 text-white m-2 text-justify">
                     {{ trick.description }}
                 </p>
-            </section>
-            <section id="trick-info" class="p-2 text-center">
-                {% set avatar = '/img/default_avatar.png' %}
-                {% set sep_avatar = 'text-white' %}
-                {% if trick.author.avatar is not empty %}
-                {% set avatar = '/img/avatar/'~trick.author.avatar %}   
-                {% set sep_avatar = '' %}
-                {% endif %}
-                    <a href="{{ url('app_user_view', {user: trick.author.id}) }}" data-toggle="tooltip" title="Dernier auteur, voir le profil ?" class="btn btn-info my-2">
+                <p class="text-secondary m-2 text-right">
+                    {% set avatar = '/img/default_avatar.png' %}
+                    {% set sep_avatar = 'text-white' %}
+                    {% if trick.author.avatar is not empty %}
+                        {% set avatar = '/img/avatar/'~trick.author.avatar %}   
+                        {% set sep_avatar = '' %}
+                    {% endif %}
+                    <a href="{{ url('app_user_view', {user: trick.author.id}) }}" data-toggle="tooltip" class="text-secondary" title="Dernier auteur, voir le profil ?">
                         <img src="{{ asset(avatar) }}" alt="user avatar" class="avatar-small">
                         {{ trick.author.username }}
-                    </a>
-                    <span class="btn btn-info my-2" data-toggle="tooltip" title="Date de création">
-                        <i class="fa fa-calendar mr-2"></i>
+                    </a>,&nbsp;
+                    <span data-toggle="tooltip" title="Date de création">
+                        <i class="fa fa-calendar"></i>
                         {{ trick.createdAt|date("d/m/Y") }}
                     </span>
-                    <span class="btn btn-info my-2" data-toggle="tooltip" title="Groupe du trick">
-                        {{ trick.trickGroup.label }}
+                </p>
+                {% if trick.updatedAt is not empty %}
+                <p class="text-secondary m-2 text-right">
+                    <span data-toggle="tooltip" class="mt-1" title="Dernière mise à jour">
+                        <i class="fa fa-calendar"></i>
+                        {{ trick.updatedAt|date("d/m/Y") }}
                     </span>
-                    {% if trick.updatedAt is not empty %}
-                        <span class="btn btn-info my-2" data-toggle="tooltip" title="Dernière mise à jour">
-                            <i class="fa fa-calendar mr-2"></i>
-                            {{ trick.updatedAt|date("d/m/Y") }}
-                        </span>
-                    {% endif %}
+                </p>
+                {% endif %}
             </section>
             <section id="trick-comments-form" class="col-12">
                 {% if is_granted('ROLE_USER') %}

@@ -32,6 +32,7 @@ class TrickType extends AbstractType
                 'choice_label' => 'label',
                 'placeholder' => 'Groupe',
                 'required' => true,
+                'label' => 'Groupe du trick',
                 'label_attr' => [
                     'class' =>'text-white'
                 ]
