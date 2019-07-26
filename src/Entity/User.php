@@ -6,21 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(
- *  fields={"email"},
- *  message="L'email {{ value }} est déjà utilisé"
- * )
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
-    const TOKEN_FOR_PASSWORD = 1;
-    const TOKEN_FOR_REGISTRATION = 2;
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,35 +23,23 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=35)
-     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
-     * @Assert\Length(
-     *  min=3,
-     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
-     *  max=35,
-     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=35)
-     * @Assert\NotBlank(message = "Cette valeur ne peut être vide")
-     * @Assert\Length(
-     *  min=3,
-     *  minMessage = "Cette valeur doit être supérieur ou égale à {{ limit }} caractères",
-     *  max=35,
-     *  maxMessage = "Cette valeur doit être inférieur ou égale  à {{ limit }} caractères")
      */
-    private $firstName;
+    private $first_name;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private $created_at;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $updatedAt;
+    private $updated_at;
 
     /**
      * @ORM\Column(type="string", length=150)
@@ -73,12 +54,17 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $passwordRenewal;
+    private $password_renewal;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $passwordToken;
+    private $password_token;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $photo_src;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -98,31 +84,12 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $registerToken;
+    private $register_token;
 
     /**
      * @ORM\Column(type="boolean")
      */
     private $active;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $avatar;
-
-    private $file;
-
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    public function setFile($file)
-    {
-        $this->file = $file;
-        
-        return $this;
-    }
 
     public function __construct()
     {
@@ -175,36 +142,36 @@ class User implements UserInterface
 
     public function getFirstName(): ?string
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(string $first_name): self
     {
-        $this->firstName = $firstName;
+        $this->first_name = $first_name;
 
         return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTimeInterface $created_at): self
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->updatedAt;
+        return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
-        $this->updatedAt = $updatedAt;
+        $this->updated_at = $updated_at;
 
         return $this;
     }
@@ -235,31 +202,38 @@ class User implements UserInterface
 
     public function getPasswordRenewal(): ?\DateTimeInterface
     {
-        return $this->passwordRenewal;
+        return $this->password_renewal;
     }
 
-    public function setPasswordRenewal(?\DateTimeInterface $passwordRenewal): self
+    public function setPasswordRenewal(?\DateTimeInterface $password_renewal): self
     {
-        $this->passwordRenewal = $passwordRenewal;
+        $this->password_renewal = $password_renewal;
 
         return $this;
     }
 
     public function getPasswordToken(): ?string
     {
-        return $this->passwordToken;
+        return $this->password_token;
     }
 
-    public function setPasswordToken(?string $passwordToken): self
+    public function setPasswordToken(?string $password_token): self
     {
-        $this->passwordToken = $passwordToken;
+        $this->password_token = $password_token;
 
         return $this;
     }
 
-    public function hasRoleAdmin()
+    public function getPhotoSrc(): ?string
     {
-        return in_array('ROLE_ADMIN', $this->roles);
+        return $this->photo_src;
+    }
+
+    public function setPhotoSrc(?string $photo_src): self
+    {
+        $this->photo_src = $photo_src;
+
+        return $this;
     }
 
     public function setRoles(?array $roles): self
@@ -333,12 +307,12 @@ class User implements UserInterface
 
     public function getRegisterToken(): ?string
     {
-        return $this->registerToken;
+        return $this->register_token;
     }
 
-    public function setRegisterToken(?string $registerToken): self
+    public function setRegisterToken(?string $register_token): self
     {
-        $this->registerToken = $registerToken;
+        $this->register_token = $register_token;
 
         return $this;
     }
@@ -353,39 +327,5 @@ class User implements UserInterface
         $this->active = $active;
 
         return $this;
-    }
-
-    public function getAvatar(): ?string
-    {
-        return $this->avatar;
-    }
-
-    public function setAvatar(?string $avatar): self
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    /**
-     * Generate a token
-     *
-     * @param int $type
-     * @return void
-     */
-    public function generateToken($type)
-    {
-        $token = uniqid();
-
-        switch ($type) {
-            case self::TOKEN_FOR_PASSWORD:
-                $this->setPasswordToken($token);
-                    break;
-            case self::TOKEN_FOR_REGISTRATION: 
-                $this->setRegisterToken($token);
-                    break;
-            default:
-                break;
-        }
     }
 }

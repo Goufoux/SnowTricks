@@ -1,70 +1,14 @@
-$(document).ready(function() {
+/*
+ * Welcome to your app's main JavaScript file!
+ *
+ * We recommend including the built version of this JavaScript file
+ * (and its CSS file) in your base layout (base.html.twig).
+ */
 
-    // Enable tooltip
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+// any CSS you require will output into a single css file (app.css in this case)
+require('../css/app.css');
 
-    // Preload img 
-    $("form").on("change", ".custom-file-input", function () {
-        console.log('file changed');
-        let $input = $(this);
-        let fileName = $input.val().split("\\").pop();
-        $input.siblings(".custom-file-label").html(fileName);
+// Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
+// const $ = require('jquery');
 
-        // Afficher un aperçu de l'image sélectionnée
-        let files = this.files;
-        if (files == undefined || files.length == 0) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            $parent = $input.parent().parent();
-
-            $previewEl = $parent.children('.preview-photo');
-            if ($previewEl.length == 0) {
-                $parent.append('<img class="preview-photo img-fluid" src="' + e.target.result + '" alt="prévisualisation de l\'image">')
-            } else {
-                $previewEl.attr('src', e.target.result);
-            }
-        }
-        reader.readAsDataURL(files[0]);
-    });
-    
-    // remove an image
-    $('.delete-image').on('click', function() {
-        var $this = $(this);
-        var key = $this.data('key');
-        var elm = $this.data('elm');
-        var type = $this.data('type');
-        $.get({
-            url: "/"+elm+"/"+type+"/remove/"+key,
-            success: function (data) {
-                $this.fadeOut();
-            },
-            error: function(e) {
-                console.log("error", e);
-            }
-        });
-    });
-
-    // remove video
-    $('.delete-video').on('click', function() {
-        var $this = $(this);
-        var key = $this.data('key');
-        $.get({
-            url: "/trick/video/remove/"+key,
-            success: function (data) {
-                $('#iframe-'+key).fadeOut('slow', function () {
-                    $('#iframe-'+key).remove();
-                    console.log($('.video-bloc .bloc-iframe').length);
-                    if ($('.video-bloc .bloc-iframe').length <= 0) {
-                        $('.video-bloc').append($('<div class="alert alert-info"><h5 class="alert-heading">Aucune vidéo</h5></div>'));
-                    }
-                });
-            },
-            error: function (e) {
-                console.log('error', e.responseJSON);
-            }
-        });
-    });
-});
+console.log('Hello Webpack Encore! Edit me in assets/js/app.js');

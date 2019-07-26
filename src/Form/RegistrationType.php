@@ -29,6 +29,12 @@ class RegistrationType extends AbstractType
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmation du mot de passe']
             ])
+            ->add('register', Type\SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-success'
+                ],
+                'label' => 'Inscription'
+            ])
         ;
     }
 
@@ -36,8 +42,6 @@ class RegistrationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'isAdmin' => false,
-            'hasRoleAdmin' => false
         ]);
     }
 }

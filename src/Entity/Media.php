@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MediaRepository")
@@ -26,21 +25,12 @@ class Media
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $mediaSrc;
+    private $media_src;
 
-    private $file;
-
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    public function setFile($file)
-    {
-        $this->file = $file;
-    
-        return $this;
-    }
+    /**
+     * @ORM\Column(type="string", length=5)
+     */
+    private $type;
 
     public function getId(): ?int
     {
@@ -61,12 +51,24 @@ class Media
 
     public function getMediaSrc(): ?string
     {
-        return $this->mediaSrc;
+        return $this->media_src;
     }
 
-    public function setMediaSrc(string $mediaSrc): self
+    public function setMediaSrc(string $media_src): self
     {
-        $this->mediaSrc = $mediaSrc;
+        $this->media_src = $media_src;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

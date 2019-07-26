@@ -2,21 +2,28 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{{ title|default('SnowTricks') }}</title>
+        <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('backend-global') }}
+            {{ encore_entry_link_tags('global') }}
         {% endblock %}
     </head>
-    <body>        
-        {% include "backend/menu/base.menu.html.twig" %}
-        {% include "include/flash.html.twig" %}
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url('app_index') }}">SnowTricks</a>
+            <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                </ul>
+            </div>
+        </nav>
         <div class="container">
             <div class="row">
                 {% block body %}{% endblock %}
             </div>
         </div>
         {% block javascripts %}
-            {{ encore_entry_script_tags('backend-global') }}
+            {{ encore_entry_script_tags('global') }}
         {% endblock %}
     </body>
 </html>

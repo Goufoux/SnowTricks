@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TrickGroupRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\GroupRepository")
  */
-class TrickGroup
+class Group
 {
     /**
      * @ORM\Id()
@@ -21,7 +21,7 @@ class TrickGroup
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private $created_at;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -29,7 +29,7 @@ class TrickGroup
     private $label;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Trick", mappedBy="trickGroup")
+     * @ORM\OneToMany(targetEntity="App\Entity\Trick", mappedBy="trick_group")
      */
     private $tricks;
 
@@ -45,12 +45,12 @@ class TrickGroup
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTimeInterface $created_at): self
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
 
         return $this;
     }
