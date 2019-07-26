@@ -15,40 +15,38 @@ class MailerService
         $this->templating = $templating;
     }
 
-    public function sendMailForForgotPassword(User $user)
+    public function sendMail(User $user, string $template, array $data)
     {
         $message = (new \Swift_Message('Réinitialisation du mot de passe'))
             ->setFrom('admin@genarkys.fr')
             ->setTo($user->getEmail())
             ->setBody(
                 $this->templating->render(
-                    'mail/forgot-password.html.twig',
-                    [
-                        'username' => $user->getUsername(),
-                        'token' => $user->getPasswordToken()
-                    ]
+                    $template,
+                    $data
                 ),
                 'text/html'
         );
-        $this->mailer->send($message);
+        return $this->mailer->send($message);
+    }
+
+    public function sendMailForForgotPassword(User $user)
+    {
+        $data = [
+            'username' => $user->getUsername(),
+            'token' => $user->getPasswordToken()
+        ];
+
+        return $this->sendMail($user, 'mail/forgot-password.html.twig', $data);
     }
 
     public function sendRegisterMail(User $user)
     {
-        $message = (new \Swift_Message('Inscription sur SnowTricks !'))
-                        ->setFrom('admin@genarkys.fr')
-                        ->setTo($user->getEmail())
-                        ->setBody(
-                            $this->templating->render(
-                                'mail/registration.html.twig',
-                                [
-                                    'username' => $user->getUsername(),
-                                    'token' => $user->getRegisterToken()
-                                ]
-                            ),
-                            'text/html'
-                        );
-            
-        $this->mailer->send($message);
+        $data = [
+            'username' => $user->getUsername(),
+            'token' => $user->getRegisterToken()
+        ];
+
+        return $this->sendMail($user, 'mail/registration.html.twig', $data);
     }
 }

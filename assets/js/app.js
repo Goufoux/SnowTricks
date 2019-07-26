@@ -306,17 +306,12 @@ function replaceFooter() {
 
         const $trickContainer = $('#trick-section');
 
-        console.log($trickContainer);
-
         if ($trickContainer.length) {
             let trickContainerHeight = $trickContainer.height() + 150;
-            console.log('container de trick detected, footer position on y : ' + trickContainerHeight+'px')
             if (trickContainerHeight >= wh) {
                 $('footer').css('top', trickContainerHeight+'px');
                 $('footer').css('position', 'absolute');
             }
-
-
         }
 
         if (wh == height) {
@@ -328,7 +323,7 @@ function replaceFooter() {
     });
 }
 
-function detectmob() { 
+function detectmob() {
     if( navigator.userAgent.match(/Android/i)
     || navigator.userAgent.match(/webOS/i)
     || navigator.userAgent.match(/iPhone/i)
