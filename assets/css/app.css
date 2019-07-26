@@ -69,6 +69,11 @@ body {
     cursor: pointer;
 }
 
+.homepage-blockquote {
+    background: radial-gradient(circle at left, rgba(230, 230, 230, 0.5) 40%, #133369c9);
+    border-radius: 5px;
+}
+
 #trick-arrow {
     position: absolute;
     right: 3%;
@@ -218,6 +223,7 @@ iframe {
 #main-footer {
     opacity: 0;
     width: 100%;
+    color: gray;
 }
 .footer-fix {
     position: fixed;
