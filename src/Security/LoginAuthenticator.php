@@ -71,7 +71,16 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException('Aucun compte relié à cette adresse email.');
         }
 
+        if (!$this->isActive($user)) {
+            throw new CustomUserMessageAuthenticationException('Votre compte est désactivé.');
+        }
+
         return $user;
+    }
+
+    public function isActive(User $user)
+    {
+        return $user->getActive() === true;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -85,7 +94,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         return new RedirectResponse($this->urlGenerator->generate('app_index'));
     }
 

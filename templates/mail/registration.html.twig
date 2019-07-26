@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <h1>Bienvenu(e) {{ username }} !</h1>
+        <blockquote>
+            Vous avez décidé de rejoindre la communauté du site SnowTricks
+        </blockquote>
+        <p>
+            Pour valider votre compte, suivre ce lien : <button><a href="{{ url('app_register_confirm', {token: token}) }}">Suivre</a></button>
+        </p>
+    </body>
+</html>
