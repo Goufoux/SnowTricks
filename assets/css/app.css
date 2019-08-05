@@ -54,8 +54,8 @@ body {
 }
 
 #homepage-arrow {
-    background: white;
-    padding: 10px;
+    background: #292929;
+    padding: 10px 16px;
     border-radius: 50%;
     position: absolute;
     bottom: 7%;
@@ -249,7 +249,7 @@ iframe {
         margin-bottom: 63px;
     }
     #homepage-arrow {
-        bottom: 9%;
+        bottom: 11%;
     }
     .trick-header {
         min-height: 350px;
