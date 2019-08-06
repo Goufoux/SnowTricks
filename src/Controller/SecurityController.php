@@ -177,7 +177,6 @@ class SecurityController extends ObjectManagerController
         $this->addFlash('success', 'Compte activé. Vous pouvez désormais vous connecter.');
 
         return new RedirectResponse($this->generateUrl('app_index_index'));
-
     }
 
     /**
@@ -185,6 +184,6 @@ class SecurityController extends ObjectManagerController
      */
     public function logout()
     {
-        
+        // No code here !
     }
 }
