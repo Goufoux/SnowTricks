@@ -14,4 +14,13 @@ class IndexControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
+
+    public function testTitleIndex()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/');
+
+        $this->assertSelectorTextContains('html #homepage-section h1.h2', 'SnowTricks');
+    }
 }
