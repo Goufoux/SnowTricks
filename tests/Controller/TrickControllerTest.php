@@ -28,16 +28,7 @@ class TrickControllerTest extends WebTestCase
         $client->submit($form, [
             'trick[name]' => 'test',
             'trick[description]' => 'Test',
-            'trick[trickGroup]' => 26
+            'trick[trickGroup]' => 251
         ]);
     }
-
-    // public function testDelete()
-    // {
-    //     $client = static::createClient();
-
-    //     $client->request('GET', '/trick/remove/1');
-
-        // $this->assertResponseRedirects('/trick/remove/1', 301);
-    // }
 }
