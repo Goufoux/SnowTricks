@@ -28,7 +28,7 @@ class TrickControllerTest extends WebTestCase
         $client->submit($form, [
             'trick[name]' => 'test',
             'trick[description]' => 'Test',
-            'trick[trickGroup]' => 251
+            'trick[trickGroup]' => 335
         ]);
     }
 }

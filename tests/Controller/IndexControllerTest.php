@@ -19,7 +19,7 @@ class IndexControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/');
 
         $this->assertSelectorTextContains('html #homepage-section h1.h2', 'SnowTricks');
     }

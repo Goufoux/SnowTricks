@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\VideoLink;
 use App\Form\CommentType;
 use App\Entity\Comment;
+use App\Service\Helper;
+use Symfony\Component\Form\FormError;
 
 class TrickController extends ObjectManagerController
 {
@@ -124,6 +126,15 @@ class TrickController extends ObjectManagerController
             /** @var array $files */
             $files = $request->files->get('trick')['media'] ?? [];
             
+            $slug = Helper::slugify($trick->getName());
+            
+            if (false === $slug) {
+                $trickForm->get('name')->addError(new FormError('Le nom ne semble pas valide'));
+
+                goto out;
+            }
+
+            $trick->setSlug($slug);
             $videoLinks = $request->request->get('trick')['videoLinks'] ?? [];
             
             $this->addFilesToTrick($files, $fileService, $trick);
@@ -143,6 +154,8 @@ class TrickController extends ObjectManagerController
 
             return new RedirectResponse($this->generateUrl('app_trick_update', ['slug' => $trick->getSlug()]));
         }
+
+        out:
 
         return [
             'form' => $trickForm->createView(),

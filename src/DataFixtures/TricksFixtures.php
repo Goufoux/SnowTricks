@@ -34,7 +34,7 @@ class TricksFixtures extends Fixture
             $trick->setAuthor($this->getReference('User_'.rand(1, 49)));
             $trick->setTrickGroup($this->getReference('TrickGroup_'.rand(1, 29)));
             $trick->setName($this->faker->sentence(2));
-            $trick->setDescription($this->faker->sentence(550));
+            $trick->setDescription($this->faker->sentence(50));
             $manager->persist($trick);
         }
 
@@ -57,7 +57,7 @@ class TricksFixtures extends Fixture
         $specialUser = new User();
         $specialUser->setName('Roussel');
         $specialUser->setFirstName('Quentin');
-        $specialUser->setEmail('quentin.roussel@genarkys.fr');
+        $specialUser->setEmail('quentin.rsoussel@genarkys.fr');
         $specialUser->setCreatedAt(new \DateTime());
         $encodedPassword = $this->encoder->encodePassword($specialUser, self::DEFAULT_PASSWORD);
         $specialUser->setPassword($encodedPassword);

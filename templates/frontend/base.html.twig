@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,6 +23,11 @@
                                 <a href="{{ url('app_adminindex_index') }}" class="nav-link">Backend</a>
                             </li>
                         {% endif %}
+                        <li class="nav-item">
+                            <a href="{{ url('app_trick_new') }}" class="nav-link">
+                                Ajouter un trick
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="{{ url('app_security_logout') }}" class="nav-link">Déconnexion</a>
                         </li>
@@ -48,6 +53,9 @@
                             <i class="fa fa-key fa-2x"></i>
                         </a>
                     {% endif %}
+                    <a href="{{ url('app_trick_new') }}" class="col">
+                        <i class="fa fa-plus fa-2x"></i>
+                    </a>
                     <a href="{{ url('app_security_logout') }}" class="col">
                         <i class="fa fa-sign-out fa-2x"></i>
                     </a>

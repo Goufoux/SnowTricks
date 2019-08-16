@@ -17,7 +17,7 @@ class MailerService
 
     public function sendMail(User $user, string $template, array $data)
     {
-        $message = (new \Swift_Message('Réinitialisation du mot de passe'))
+        $message = (new \Swift_Message('SnowTricks'))
             ->setFrom('admin@genarkys.fr')
             ->setTo($user->getEmail())
             ->setBody(
