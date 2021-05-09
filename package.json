@@ -20,6 +20,6 @@
     "dependencies": {
         "font-awesome": "^4.7.0",
         "jquery-confirm": "^3.3.4",
-        "lodash": "^4.17.14"
+        "lodash": "^4.17.21"
     }
 }
